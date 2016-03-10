@@ -11,6 +11,15 @@ namespace WindowsFormsApplication1
 {
     class ObjectAnalysis
     {
+        /// <summary>
+        ///从解压出的Gefran文件中，获得需要的变量
+        /// 
+        /// </summary>
+        /// <param name="sourcePath">文件存放位置</param>   
+        /// <param name="fileName">文件名字</param>   
+        /// <param name="option">从文件获取变量时有可选值：0和1位点值，2为实际值等</param>   
+        /// <param name="model">控制器类型，“gefranVedo”或“gefranPerfoma”</param>   
+        /// <returns></returns>
        static public JObject analyseGefranFile(string sourcePath,string fileName,int option,string model="gefranVedo")
         {
             StreamReader file = new StreamReader(sourcePath + "\\" + fileName);

@@ -55,6 +55,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionOption.cs" />
+    <Compile Include="InjectionMachineWithGefran.cs" />
+    <Compile Include="InjectionMachineWithGefranPerfoma.cs" />
     <Compile Include="TelnetHelper.cs" />
     <Compile Include="OpcHelper.cs" />
     <Compile Include="DataCapture.cs" />
@@ -129,9 +132,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="app_code\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

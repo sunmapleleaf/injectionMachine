@@ -21,24 +21,17 @@ namespace WindowsFormsApplication1
         public string selectedOpcSrv;			// Name (ProgID) of selected OPC-server
         public OpcServer theSrv = null;			// root OPCDA object
         public OpcGroup theGrp = null;			// the only one OPC-Group in this example
-        public string itmFullID;					// fully qualified OPC namespace path
         public int itmHandleClient;			// 0 if no current item selected
-        public int itmHandleServer;
+        public int itmHandleServer;         
         public OPCACCESSRIGHTS itmAccessRights;
         public TypeCode itmTypeCode;				// saved data type of current item
         public bool first_activated = false;	// workaround to show SelServer Form on applic. start
         public bool opc_connected = false;		// flag if connected
         public string rootname = "Root";			// string of TreeView root (dummy)
-        public string selectednode;
-        private TextBox showValue;
-        private Button getValue;
-        private ColumnHeader hdrListCol3;
-        public string selecteditem;				// item in ListView
         public List<string[]> itemsValue = new List<string[]>();   //all items value
 
         protected void theSrv_ServerShutDown(object sender, ShutdownRequestEventArgs e)
-        {					// event: the OPC server shuts down
-            //MessageBox.Show(this, "OPC server shuts down because:" + e.shutdownReason, "ServerShutDown", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        {					
         }
 
         public bool DoInit()
@@ -46,18 +39,11 @@ namespace WindowsFormsApplication1
             try
             {
                 thisprocess = Process.GetCurrentProcess();		// see DoConnect for client-name
-
-
                 SelServer frmSelSrv = new SelServer();		// create form and let user select a name
                 frmSelSrv.ShowDialog();
                 if (frmSelSrv.selectedOpcSrv == null)
                     frmSelSrv.Close();
-
                 selectedOpcSrv = frmSelSrv.selectedOpcSrv;			// OPC server ProgID
-
-
-
-
                 // ---------------
                 theSrv = new OpcServer();
                 if (!DoConnect(selectedOpcSrv))
@@ -76,7 +62,6 @@ namespace WindowsFormsApplication1
             }
             catch (Exception e)		// exceptions MUST be handled
             {
-               // MessageBox.Show(this, "init error! " + e.ToString(), "Exception", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
             return true;
@@ -93,19 +78,12 @@ namespace WindowsFormsApplication1
 
                 SERVERSTATUS sts;
                 theSrv.GetStatus(out sts);
-
                 // get infos about OPC server
                 StringBuilder sb = new StringBuilder(sts.szVendorInfo, 200);
                 sb.AppendFormat(" ver:{0}.{1}.{2}", sts.wMajorVersion, sts.wMinorVersion, sts.wBuildNumber);
-                //txtServerInfo.Text = sb.ToString();
-
-                // set status bar text to show server state
-                //sbpTimeStart.Text = DateTime.FromFileTime(sts.ftStartTime).ToString();
-                //sbpStatus.Text = sts.eServerState.ToString();
             }
             catch (COMException)
             {
-                //MessageBox.Show(this, "connect error!", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
             return true;
@@ -125,7 +103,6 @@ namespace WindowsFormsApplication1
             }
             catch (COMException)
             {
-                //MessageBox.Show(this, "create group error!", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
             return true;
@@ -137,40 +114,16 @@ namespace WindowsFormsApplication1
         // event handler: called if any item in group has changed values
         protected void theGrp_DataChange(object sender, DataChangeEventArgs e)
         {
-            Trace.WriteLine("theGrp_DataChange  id=" + e.transactionID.ToString() + " me=0x" + e.masterError.ToString("X"));
-            string[] name = { "192_168_1_210.Alarm.tmAlarmState", "192_168_1_210.Temperature.tmTemp1_Set" };
             int i = 0;
 
-            int[] ids;
-            this.theSrv.QueryAvailableLocaleIDs(out ids);
             foreach (OPCItemState s in e.sts)
             {
-              //  if (s.HandleClient != itmHandleClient)		// only one client handle
-              //      continue;
-
-                Trace.WriteLine("  item error=0x" + s.Error.ToString("X"));
-
                 if (HRESULTS.Succeeded(s.Error))
                 {
                     Trace.WriteLine("  val=" + s.DataValue.ToString());
-                    // value += name[i]+":" + s.DataValue.ToString()+";\n";
-                    itemsValue[s.HandleClient][1] = s.DataValue.ToString();
-                    
-                    i++;
-                    // string qulity = OpcGroup.QualityToString(s.Quality);
-                    // string timestamp = DateTime.FromFileTime( s.TimeStamp ).ToString();
-                    //  SetValue(value);
-                    //  SetQulity(qulity);
-                    //   SetTimestamp(timestamp);
-                    //txtItemValue.Text = temp;		// update screen
-                    //txtItemQual.Text	= OpcGroup.QualityToString( s.Quality );
-                    //txtItemTimeSt.Text  = DateTime.FromFileTime( s.TimeStamp ).ToString();
-                }
-                else
-                {
-                    //txtItemValue.Text = "ERROR 0x" + s.Error.ToString("X");
-                    //txtItemQual.Text = "error";
-                    //txtItemTimeSt.Text = "error";
+                    //将改变的值给对应Item
+                    itemsValue[s.HandleClient][1] = s.DataValue.ToString();                  
+                    i++;                  
                 }
             }
         }
@@ -191,24 +144,18 @@ namespace WindowsFormsApplication1
                 OPCNAMESPACETYPE opcorgi = theSrv.QueryOrganization();
 
                 // fill TreeView with all
-                //treeOpcItems.Nodes.Clear();
                 TreeNode tnRoot = new TreeNode(rootname, 0, 1);
                 if (opcorgi == OPCNAMESPACETYPE.OPC_NS_HIERARCHIAL)
                 {
                     theSrv.ChangeBrowsePosition(OPCBROWSEDIRECTION.OPC_BROWSE_TO, "");	// to root
                     RecurBrowse(tnRoot, 1);
                 }
-                //treeOpcItems.Nodes.Add(tnRoot);
 
                 tnRoot.ExpandAll();			// expand all nodes ([+] -> [-])
                 tnRoot.EnsureVisible();		// make the root visible
-
-                // preselect root (dummy)
-                //treeOpcItems.SelectedNode = tnRoot;		// force treeOpcItems_AfterSelect
             }
             catch (COMException /* eX */ )
             {
-                //MessageBox.Show(this, "browse error!", "DoBrowse", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
             return true;
@@ -228,8 +175,6 @@ namespace WindowsFormsApplication1
                     return true;
                 foreach (string s in lst)
                 {
-                    if (s == "192_168_1_211")
-                        tempStr = s;
                     TreeNode tnNext = new TreeNode(s, 0, 1);
                     theSrv.ChangeBrowsePosition(OPCBROWSEDIRECTION.OPC_BROWSE_DOWN, s);
 
@@ -239,17 +184,14 @@ namespace WindowsFormsApplication1
                         theSrv.ChangeBrowsePosition(OPCBROWSEDIRECTION.OPC_BROWSE_TO, "");
                     else
                         theSrv.ChangeBrowsePosition(OPCBROWSEDIRECTION.OPC_BROWSE_TO, tnParent.Text);
+                    //叶子节点的时候存储全路径节点名
                     if (tnNext.FirstNode == null)
                     {
-
                         string[] strTemp = new string[2];
                         strTemp[0] = tmpName;
                         strTemp[1] = "1";
                         itemsValue.Add(strTemp);
                     }
-
-                    //TreeNode previous = tnParent;
-
                     tnParent.Nodes.Add(tnNext);
                 }
 
@@ -258,61 +200,12 @@ namespace WindowsFormsApplication1
             catch (COMException eX)
             {
                 Console.WriteLine(eX.ToString());
-                //MessageBox.Show(this, "browse error!", "RecurBrowse", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
             return true;
         }
 
-
-        public bool ViewItem(string opcid)
-        {
-            try
-            {
-                RemoveItem();		// first remove previous item if any
-                itmHandleClient = 1234;
-                OPCItemDef[] aD = new OPCItemDef[1];
-                aD[0] = new OPCItemDef(opcid, true, itmHandleClient, VarEnum.VT_EMPTY);
-                OPCItemResult[] arrRes;
-                theGrp.AddItems(aD, out arrRes);
-                if (arrRes == null)
-                    return false;
-                if (arrRes[0].Error != HRESULTS.S_OK)
-                    return false;
-
-                //btnItemMore.Enabled = true;
-                itmHandleServer = arrRes[0].HandleServer;
-                itmAccessRights = arrRes[0].AccessRights;
-                itmTypeCode = VT2TypeCode(arrRes[0].CanonicalDataType);
-
-                //txtItemID.Text = opcid;
-                //txtItemDataType.Text = DUMMY_VARIANT.VarEnumToString(arrRes[0].CanonicalDataType);
-
-                if ((itmAccessRights & OPCACCESSRIGHTS.OPC_READABLE) != 0)
-                {
-                    int cancelID;
-                    theGrp.Refresh2(OPCDATASOURCE.OPC_DS_DEVICE, 7788, out cancelID);
-                }
-                //else ;
-                    //txtItemValue.Text = "no read access";
-
-                if (itmTypeCode != TypeCode.Object)				// Object=failed!
-                {
-                    // check if write is premitted
-                    if ((itmAccessRights & OPCACCESSRIGHTS.OPC_WRITEABLE) != 0) ;
-                        //btnItemWrite.Enabled = true;
-                }
-            }
-            catch (COMException)
-            {
-                //MessageBox.Show(this, "AddItem OPC error!", "ViewItem", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-            return true;
-        }
-
-
-        // remove previous OPC item if any
+       
         public bool RemoveItem()
         {
             try
@@ -320,15 +213,6 @@ namespace WindowsFormsApplication1
                 if (itmHandleClient != 0)
                 {
                     itmHandleClient = 0;
-                    //txtItemID.Text = "";		// clear screen texts
-                    //txtItemValue.Text = "";
-                    //txtItemDataType.Text = "";
-                    //txtItemQual.Text = "";
-                    //txtItemTimeSt.Text = "";
-                    //txtItemSendValue.Text = "";
-                    //txtItemWriteRes.Text = "";
-                    //btnItemWrite.Enabled = false;
-                    //btnItemMore.Enabled = false;
 
                     int[] serverhandles = new int[1] { itmHandleServer };
                     int[] remerrors;
@@ -342,12 +226,6 @@ namespace WindowsFormsApplication1
             }
             return true;
         }
-
-
-
-
-
-
 
 
         public TypeCode VT2TypeCode(VarEnum vevt)
@@ -399,17 +277,13 @@ namespace WindowsFormsApplication1
                 DoInit();
                 int itemsValueCount = itemsValue.Count;
                 OPCItemDef[] aD = new OPCItemDef[itemsValueCount];
+                //将节点添加到group中
                 for (int i = 0; i < itemsValueCount; i++)
                 {
                     itmHandleClient = i;
 
                     aD[i] = new OPCItemDef(itemsValue[i][0], true, itmHandleClient, VarEnum.VT_EMPTY);
                 }
-
-                //int[] ids;
-                //this.theSrv.QueryAvailableLocaleIDs(out ids);
-                //string strtmp;
-                //strtmp = theSrv.GetItemProperties((ids[0].ToString());
                 SERVERSTATUS status;
                 theSrv.GetStatus(out status);
                 OPCItemResult[] arrRes;
@@ -419,32 +293,18 @@ namespace WindowsFormsApplication1
                 if (arrRes[0].Error != HRESULTS.S_OK)
                     return;
 
-                //btnItemMore.Enabled = true;
                 itmHandleServer = arrRes[0].HandleServer;
                 itmAccessRights = arrRes[0].AccessRights;
                 itmTypeCode = VT2TypeCode(arrRes[0].CanonicalDataType);
-
-                //   txtItemID.Text = opcid;
-                //    txtItemDataType.Text = DUMMY_VARIANT.VarEnumToString(arrRes[0].CanonicalDataType);
 
                 if ((itmAccessRights & OPCACCESSRIGHTS.OPC_READABLE) != 0)
                 {
                     int cancelID;
                     theGrp.Refresh2(OPCDATASOURCE.OPC_DS_DEVICE, 7788, out cancelID);
                 }
-                else ;
-                    //txtItemValue.Text = "no read access";
-
-                if (itmTypeCode != TypeCode.Object)				// Object=failed!
-                {
-                    // check if write is premitted
-                    //if ((itmAccessRights & OPCACCESSRIGHTS.OPC_WRITEABLE) != 0)
-                    //    btnItemWrite.Enabled = true;
-                }
             }
             catch (COMException)
             {
-                //MessageBox.Show(this, "AddItem OPC error!", "ViewItem", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
         }
