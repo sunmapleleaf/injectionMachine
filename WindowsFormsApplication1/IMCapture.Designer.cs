@@ -34,10 +34,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
-            this.button3 = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            this.viewHXData = new System.Windows.Forms.Button();
+            this.tbText = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // connect
@@ -89,7 +87,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(221, 126);
+            this.button1.Location = new System.Drawing.Point(35, 203);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 7;
@@ -97,46 +95,30 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_2);
             // 
-            // progressBar1
+            // viewHXData
             // 
-            this.progressBar1.BackColor = System.Drawing.Color.Blue;
-            this.progressBar1.Cursor = System.Windows.Forms.Cursors.HSplit;
-            this.progressBar1.ForeColor = System.Drawing.Color.LightGoldenrodYellow;
-            this.progressBar1.Location = new System.Drawing.Point(221, 35);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.progressBar1.RightToLeftLayout = true;
-            this.progressBar1.Size = new System.Drawing.Size(247, 53);
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBar1.TabIndex = 8;
-            this.progressBar1.Value = 50;
+            this.viewHXData.Location = new System.Drawing.Point(117, 203);
+            this.viewHXData.Name = "viewHXData";
+            this.viewHXData.Size = new System.Drawing.Size(75, 23);
+            this.viewHXData.TabIndex = 8;
+            this.viewHXData.Text = "宏讯OPC";
+            this.viewHXData.UseVisualStyleBackColor = true;
+            this.viewHXData.Click += new System.EventHandler(this.viewHXData_Click);
             // 
-            // trackBar1
+            // tbText
             // 
-            this.trackBar1.Location = new System.Drawing.Point(345, 126);
-            this.trackBar1.Maximum = 100;
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(104, 45);
-            this.trackBar1.TabIndex = 9;
-            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(221, 164);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 10;
-            this.button3.Text = "翻译";
-            this.button3.UseVisualStyleBackColor = true;
+            this.tbText.Location = new System.Drawing.Point(301, 122);
+            this.tbText.Name = "tbText";
+            this.tbText.Size = new System.Drawing.Size(100, 21);
+            this.tbText.TabIndex = 9;
             // 
             // IMCapture
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(525, 284);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.trackBar1);
-            this.Controls.Add(this.progressBar1);
+            this.ClientSize = new System.Drawing.Size(506, 260);
+            this.Controls.Add(this.tbText);
+            this.Controls.Add(this.viewHXData);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.button2);
@@ -146,7 +128,6 @@
             this.Name = "IMCapture";
             this.Text = "数据采集";
             this.Load += new System.EventHandler(this.IMCapture_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -160,9 +141,8 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.TrackBar trackBar1;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button viewHXData;
+        private System.Windows.Forms.TextBox tbText;
     }
 }
 

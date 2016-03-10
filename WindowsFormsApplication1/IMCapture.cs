@@ -33,30 +33,7 @@ namespace WindowsFormsApplication1
         public IMCapture()
         {
             InitializeComponent();
-            ////获得8网段的IP
-            //ConnectionOption.getIP();
-            ////从数据库获得CONNECTION列表，并建立连接
-            //string SQLCONNECT = IMDataBase.connStr;
-            //SqlConnection conn = new SqlConnection(SQLCONNECT);
-            //conn.Open();
-
-            //string SQLCOMMAND = "select connDetail from connectionOption";
-            //DataSet ds = new DataSet();
-            //SqlDataAdapter da = new SqlDataAdapter(SQLCOMMAND, conn);
-            //da.Fill(ds);
-
-            //foreach (DataRow tmp in ds.Tables[0].Rows)
-            //{
-            //    listConn.Add(JsonConvert.DeserializeObject<ConnectionOption>(tmp[0].ToString()));
-
-            //    //   ConnectionOption connTmp = JsonConvert.DeserializeObject<ConnectionOption>(tmp[0].ToString());
-            //    //   if(connTmp.connectToController())
-            //    {
-            //        listConn[listConn.Count - 1].connectToController();
-            //    }
-
-            //}
-            //conn.Close();
+           
 
         }
         private int ID;
@@ -68,83 +45,8 @@ namespace WindowsFormsApplication1
         private void button1_Click(object sender, EventArgs e)
         {
 
-
             ConnectionOption.getIP();
-            int i=0;
-            i = 2;
-            //foreach (ConnectionOption item in listConn)
-            //{
-            //    if (item.controllerType == "gefranPerfoma" && item.connStatus == "1")
-            //    {
-            //        new DataCapture().getFilesFromGefran(@"ftp://"+item.IP+@"/gefran/recipes/", Application.StartupPath + @"\data\gefranPerfoma", item.machineID+".zip");
-            //        JObject jo = ObjectAnalysis.analyseGefranFile(Application.StartupPath + @"\data\gefranPerfoma", item.machineID+".txt", 2, 1);
-            //        (new IMDataBase()).writeDataBase(IMDataBase.connStr, item.machineID, jo.ToString());
-            //    }
-            //}
-
-            //FtpHelper ftpTmp = new FtpHelper();
-
-
-            // new DataCapture().getFilesFromGefran(@"ftp://192.168.8.210/gefran/recipes/", Application.StartupPath + @"\data\gefranPerfoma", "gefranPerfoma001.zip");
-       //     JObject jo = ObjectAnalysis.analyseGefranFile(Application.StartupPath + @"\data\gefranPerfoma", "gefranPerfoma001.txt", 2,1);
-    //        (new IMDataBase()).writeDataBase(IMDataBase.connStr, "gefranPerfoma001", jo.ToString());
-
-            //JObject jo = ObjectAnalysis.analyseGefranFile(Application.StartupPath + @"\data\gefranVedo", "gefranVedo001.txt", 2);
-            //(new IMDataBase()).writeDataBase(IMDataBase.connStr, "gefranVedo001", jo.ToString());
-
-           
-            
-
-
-          //  string variableValue = "", variableName ="";
-          //  //json
-          //  JsonSerializer jsS = new JsonSerializer();
-          //  StringWriter sw = new StringWriter();
-          //  jsS.Serialize(new JsonTextWriter(sw), new InjectionMachineWithGefran());
-
-          //  JObject jo = (JObject)JsonConvert.DeserializeObject(sw.ToString());
-
-          //  Console.WriteLine(jsS.DateFormatString);
-          //  foreach (var item in jo)
-          //  {
-          //      if (item.Value.ToString().IndexOf(":") == -1) ;
-          //      //  jo[item.Key] = "1";
-          //      else
-          //      {
-          //          foreach (var itemValue in (JObject)item.Value)
-          //          {
-          //              variableName += itemValue.Key+";";
-          //            //  jo[item.Key][itemValue.Key] = variableValue;
-          //          }
-          //      }
-          //  }
-          //  DateTime beforDT = System.DateTime.Now;
-          //  getDatafromGefranByFile("", out variableValue, variableName);
-          ////  string []varNameArr = variableName.Split(";");
-          //  string []varValueArr = variableValue.Split(';');
-          //  int i = 0;
-          //  foreach (var item in jo)
-          //  {
-
-          //      if (item.Value.ToString().IndexOf(":") == -1) ;
-          //      //  jo[item.Key] = "1";
-          //      else
-          //      {
-          //          foreach (var itemValue in (JObject)item.Value)
-          //          {
-          //              i++;
-          //              jo[item.Key][itemValue.Key] = varValueArr[i];
-          //          }
-          //      }
-          //  }
-          //  Console.WriteLine(jo.ToString());
-          //  //end json
-
-
-          //  DateTime afterDT = System.DateTime.Now;
-          //  TimeSpan ts = afterDT.Subtract(beforDT);
-          //  Console.WriteLine("DateTime总共花费{0}ms.", ts.TotalMilliseconds);
-           
+          
         }
   
         private void getDatafromGefranByFile(String fileName, out String variableValue,  String variableName)
@@ -227,6 +129,7 @@ namespace WindowsFormsApplication1
         }
         private System.Timers.Timer getDataTimer;
         private System.Timers.Timer slowTimer;
+        private OpcHelper HXOpc;
         private void button1_Click_1(object sender, EventArgs e)
         {
 
@@ -251,6 +154,11 @@ namespace WindowsFormsApplication1
             slowTimer.Enabled = true;
             Console.WriteLine("slow");
 
+            /*  启动OPC客户端读宏讯数据 */
+            HXOpc = new OpcHelper();
+            
+            HXOpc.getValueFormHX();
+
         }
         private void slowThreadProcess(object sender, System.Timers.ElapsedEventArgs e)
         {
@@ -267,13 +175,32 @@ namespace WindowsFormsApplication1
                 }
             }
         }
-   
+        delegate void SetValueCallback(string value);
+
+        private void SetValue(string str)
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (this.tbText.InvokeRequired)
+            {
+                SetValueCallback d = new SetValueCallback(SetValue);
+                this.Invoke(d, new object[] { str });
+            }
+            else
+            {
+                this.tbText.Text = str;
+            }
+
+
+        }
         private int timeThreadRunFlag = 0;
         //private int lastQualityDataCount = -1;
         private Dictionary<string, int> lastQualityDataCountDic = new Dictionary<string,int>();
         private void theout(object sender,System.Timers.ElapsedEventArgs e)
         {
-            
+
+            SetValue(HXOpc.itemsValue[27][1]);
             if(Interlocked.Exchange(ref timeThreadRunFlag,1)==0)
             {
                 DateTime cycleStartTime = System.DateTime.Now;
@@ -433,20 +360,16 @@ namespace WindowsFormsApplication1
             connectionOption.Show();
         }
 
-        private void trackBar1_Scroll(object sender, EventArgs e)
-        {
-            progressBar1.Value = trackBar1.Value;
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-
-            progressBar1.Value = (10+progressBar1.Value)%100;
-        }
 
         private void IMCapture_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void viewHXData_Click(object sender, EventArgs e)
+        {
+            MainForm mainForm = new MainForm();
+            mainForm.Show();
         }
     }
 }

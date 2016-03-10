@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 using OPC.Common;
 
-namespace DirectOPCClient
+namespace WindowsFormsApplication1
 {
 
 /// <summary>

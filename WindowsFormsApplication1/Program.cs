@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DirectOPCClient;
+//using DirectOPCClient;
 namespace WindowsFormsApplication1
 {
     static class Program
@@ -16,8 +16,8 @@ namespace WindowsFormsApplication1
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-           // Application.Run(new IMCapture());
-            Application.Run(new MainForm());
+             Application.Run(new IMCapture());
+            //  Application.Run(new MainForm());
         }
     }
     

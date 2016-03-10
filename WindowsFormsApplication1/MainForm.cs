@@ -13,7 +13,7 @@ using OPC.Common;
 using OPC.Data.Interface;
 using OPC.Data;
 
-namespace DirectOPCClient
+namespace WindowsFormsApplication1
 {
 	/// <summary>
 	/// Summary description for Form1.
@@ -50,20 +50,16 @@ namespace DirectOPCClient
 
 
 		public Process			thisprocess;			// running OS process
-
 		public string			selectedOpcSrv;			// Name (ProgID) of selected OPC-server
 		public OpcServer		theSrv = null;			// root OPCDA object
 		public OpcGroup			theGrp = null;			// the only one OPC-Group in this example
-
 		public string			itmFullID;					// fully qualified OPC namespace path
 		public int				itmHandleClient;			// 0 if no current item selected
 		public int				itmHandleServer;
 		public OPCACCESSRIGHTS	itmAccessRights;
 		public TypeCode			itmTypeCode;				// saved data type of current item
-	
 		public bool				first_activated = false;	// workaround to show SelServer Form on applic. start
 		public bool				opc_connected = false;		// flag if connected
-
 		public string			rootname = "Root";			// string of TreeView root (dummy)
 		public string			selectednode;
         private TextBox showValue;
@@ -88,13 +84,17 @@ namespace DirectOPCClient
 		{
 		try
 			{
-			SelServer	frmSelSrv = new SelServer( );		// create form and let user select a name
-			frmSelSrv.ShowDialog( this );
-			if( frmSelSrv.selectedOpcSrv == null )
-				this.Close();
 
-			selectedOpcSrv = frmSelSrv.selectedOpcSrv;			// OPC server ProgID
-			txtServer.Text = selectedOpcSrv;
+                SelServer frmSelSrv = new SelServer();		// create form and let user select a name
+                frmSelSrv.ShowDialog(this);
+
+                if (frmSelSrv.selectedOpcSrv == null)
+                    this.Close();
+
+                selectedOpcSrv = frmSelSrv.selectedOpcSrv;			// OPC server ProgID
+                txtServer.Text = selectedOpcSrv;
+   
+
 
 
 			// ---------------
@@ -987,45 +987,71 @@ namespace DirectOPCClient
         //AboutForm	frmAbout = new AboutForm();			// show about dialog
         //frmAbout.ShowDialog( this );
 		}
-    public bool createTreeDic(TreeNode tnParent, int depth)
-    {
+    public void getValueFormHX() {
         try
         {
-            ArrayList lst;
-            theSrv.Browse(OPCBROWSETYPE.OPC_BRANCH, out lst);
-            if (lst == null)
-                return true;
-            if (lst.Count < 1)
-                return true;
-            string tempStr;
-            foreach (string s in lst)
+           // DoInit(1);
+            itmHandleClient = 1234;
+            int itemsValueCount = itemsValue.Count;
+            OPCItemDef[] aD = new OPCItemDef[itemsValueCount];
+            for (int i = 0; i < itemsValueCount; i++)
             {
-                TreeNode tnNext = new TreeNode(s, 0, 1);
-                theSrv.ChangeBrowsePosition(OPCBROWSEDIRECTION.OPC_BROWSE_DOWN, s);
-                createTreeDic(tnNext, depth + 1);
+                aD[i] = new OPCItemDef(itemsValue[i][0], true, itmHandleClient, VarEnum.VT_EMPTY);
+            }
 
-                tnParent.Nodes.Add(tnNext);
+            //int[] ids;
+            //this.theSrv.QueryAvailableLocaleIDs(out ids);
+            //string strtmp;
+            //strtmp = theSrv.GetItemProperties((ids[0].ToString());
+            SERVERSTATUS status;
+            theSrv.GetStatus(out status);
+            OPCItemResult[] arrRes;
+            theGrp.AddItems(aD, out arrRes);
+            if (arrRes == null)
+                return;
+            if (arrRes[0].Error != HRESULTS.S_OK)
+                return;
+
+            btnItemMore.Enabled = true;
+            itmHandleServer = arrRes[0].HandleServer;
+            itmAccessRights = arrRes[0].AccessRights;
+            itmTypeCode = VT2TypeCode(arrRes[0].CanonicalDataType);
+
+            //   txtItemID.Text = opcid;
+            //    txtItemDataType.Text = DUMMY_VARIANT.VarEnumToString(arrRes[0].CanonicalDataType);
+
+            if ((itmAccessRights & OPCACCESSRIGHTS.OPC_READABLE) != 0)
+            {
+                int cancelID;
+                theGrp.Refresh2(OPCDATASOURCE.OPC_DS_DEVICE, 7788, out cancelID);
+            }
+            else
+                txtItemValue.Text = "no read access";
+
+            if (itmTypeCode != TypeCode.Object)				// Object=failed!
+            {
+                // check if write is premitted
+                if ((itmAccessRights & OPCACCESSRIGHTS.OPC_WRITEABLE) != 0)
+                    btnItemWrite.Enabled = true;
             }
         }
-        catch (COMException eX)
+        catch (COMException)
         {
-            Console.WriteLine(eX.ToString());
-            MessageBox.Show(this, "browse error!", "RecurBrowse", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return false;
+            MessageBox.Show(this, "AddItem OPC error!", "ViewItem", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
         }
-        return true;
     }
-
     private void getValue_Click(object sender, EventArgs e)
     {
         try
         {
            
-            itmHandleClient = 1234;
+            
             int itemsValueCount = itemsValue.Count;
             OPCItemDef[] aD = new OPCItemDef[itemsValueCount];
             for (int i = 0; i < itemsValueCount;i++ )
             {
+                itmHandleClient = i;
                 aD[i] = new OPCItemDef(itemsValue[i][0], true, itmHandleClient, VarEnum.VT_EMPTY);
             }
 

@@ -10,7 +10,7 @@ using OPC.Data.Interface;
 using OPC.Data;
 
 
-namespace DirectOPCClient
+namespace WindowsFormsApplication1
 {
 
 /// <summary>
