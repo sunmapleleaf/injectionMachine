@@ -13,10 +13,10 @@ using System.IO;
 using System.Data.SqlClient;
 namespace WindowsFormsApplication1
 {
-    public partial class Form2 : Form
+    public partial class Option : Form
     {
         List<ConnectionOption> connList = new List<ConnectionOption>();
-        public Form2()
+        public Option()
         {
             InitializeComponent();
             initCBConns();

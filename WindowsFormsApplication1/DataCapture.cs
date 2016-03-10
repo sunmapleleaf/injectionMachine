@@ -9,6 +9,17 @@ namespace WindowsFormsApplication1
 {
     class DataCapture
     {
+
+        /// <summary>
+        ///从Gefran控制器获得最新文件(根据文件名排序)，并解压出文件
+        /// 
+        /// </summary>
+        /// <param name="name">ftp用户名</param>   
+        /// <param name="password">ftp密码</param>   
+        /// <param name="sourcePath">控制器中文件路径</param>   
+        /// <param name="targetPath">取出后存放文件位置</param>   
+        /// <param name="targetFileName">存储文件名</param>   
+        /// <returns></returns>
         public void getFilesFromGefran(string name,string password,string sourcePath, string targetPath,string targetFileName)
         {
             FtpHelper ftpTmp = new FtpHelper();
@@ -23,8 +34,6 @@ namespace WindowsFormsApplication1
 
 
             Stream gzStream = new GZipInputStream(File.OpenRead(targetPath + "\\"+targetFileName));
-
-
             FileStream fs = File.Create(targetPath +"\\"+ targetFileName.Remove(targetFileName.LastIndexOf('.'))+".txt");
             int size = 2048;
             byte[] writeData = new byte[size];//指定缓冲区的大小     

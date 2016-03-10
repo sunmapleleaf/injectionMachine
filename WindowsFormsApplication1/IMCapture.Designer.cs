@@ -28,25 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.connect = new System.Windows.Forms.Button();
             this.sample = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.option = new System.Windows.Forms.Button();
             this.viewHXData = new System.Windows.Forms.Button();
             this.tbText = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
-            // 
-            // connect
-            // 
-            this.connect.Location = new System.Drawing.Point(35, 35);
-            this.connect.Name = "connect";
-            this.connect.Size = new System.Drawing.Size(75, 23);
-            this.connect.TabIndex = 0;
-            this.connect.Text = "连接";
-            this.connect.UseVisualStyleBackColor = true;
-            this.connect.Click += new System.EventHandler(this.button1_Click);
             // 
             // sample
             // 
@@ -56,7 +45,7 @@
             this.sample.TabIndex = 3;
             this.sample.Text = "采样";
             this.sample.UseVisualStyleBackColor = true;
-            this.sample.Click += new System.EventHandler(this.button1_Click_1);
+            this.sample.Click += new System.EventHandler(this.sample_click);
             // 
             // textBox1
             // 
@@ -74,7 +63,7 @@
             this.button2.TabIndex = 5;
             this.button2.Text = "停止采样";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.stopSample_Click);
             // 
             // label5
             // 
@@ -85,15 +74,15 @@
             this.label5.TabIndex = 6;
             this.label5.Text = "采样周期";
             // 
-            // button1
+            // option
             // 
-            this.button1.Location = new System.Drawing.Point(35, 203);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "连接选项";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_2);
+            this.option.Location = new System.Drawing.Point(35, 203);
+            this.option.Name = "option";
+            this.option.Size = new System.Drawing.Size(75, 23);
+            this.option.TabIndex = 7;
+            this.option.Text = "连接选项";
+            this.option.UseVisualStyleBackColor = true;
+            this.option.Click += new System.EventHandler(this.option_Click);
             // 
             // viewHXData
             // 
@@ -119,15 +108,14 @@
             this.ClientSize = new System.Drawing.Size(506, 260);
             this.Controls.Add(this.tbText);
             this.Controls.Add(this.viewHXData);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.option);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.sample);
-            this.Controls.Add(this.connect);
             this.Name = "IMCapture";
             this.Text = "数据采集";
-            this.Load += new System.EventHandler(this.IMCapture_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.IMCapture_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -135,12 +123,11 @@
 
         #endregion
 
-        private System.Windows.Forms.Button connect;
         private System.Windows.Forms.Button sample;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button option;
         private System.Windows.Forms.Button viewHXData;
         private System.Windows.Forms.TextBox tbText;
     }

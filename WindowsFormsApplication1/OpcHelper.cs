@@ -449,6 +449,29 @@ namespace WindowsFormsApplication1
             }
         }
 
+        public void OpcClosing()
+        {
+            if (!opc_connected)
+                return;
+
+            if (theGrp != null)
+            {
+                theGrp.DataChanged -= new DataChangeEventHandler(this.theGrp_DataChange);
+                theGrp.WriteCompleted -= new WriteCompleteEventHandler(this.theGrp_WriteComplete);
+                RemoveItem();
+                theGrp.Remove(false);
+                theGrp = null;
+            }
+
+            if (theSrv != null)
+            {
+                theSrv.Disconnect();				// should clean up
+                theSrv = null;
+            }
+
+            opc_connected = false;
+        }
+
 
     }
 }

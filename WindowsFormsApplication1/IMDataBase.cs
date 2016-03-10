@@ -13,10 +13,20 @@ using System.IO;
 
 namespace WindowsFormsApplication1
 {
+
+
     class IMDataBase
     {
         //  static public string connStr = @"server=112.124.23.181;database=mySQL;uid=sa;pwd=1234";
        static public string connStr = @"server=JS-DIANQI\SQLEXPRESS;database=mySQL;uid=sa;pwd=1234";
+
+       /// <summary>
+       /// 将数据写入数据库
+       /// </summary>
+       /// <param name="connStr">连数据库字串</param>  
+       /// <param name="machineID">机器ID</param>
+       /// <param name="machineID">数据</param> 
+       /// <returns></returns>
         public void writeDataBase(string connStr,string machineID,string data)
         {
             //string SQLCONNECT = @"server=JS-DIANQI\SQLEXPRESS;database=mySQL;uid=sa;pwd=1234";
@@ -29,6 +39,14 @@ namespace WindowsFormsApplication1
             sqlcmd.ExecuteNonQuery();
             conn.Close();
         }
+        /// <summary>
+        /// 将质量管理数据写入数据库
+        /// </summary>
+        /// <param name="connStr">连数据库字串</param>  
+        /// <param name="machineID">机器ID</param>
+        /// <param name="number">编号</param>
+        /// <param name="data">数据</param> 
+        /// <returns></returns>
         public void writeQualityDataToDB(string connStr, string machineID,string number, string data)
         {
             //string SQLCONNECT = @"server=JS-DIANQI\SQLEXPRESS;database=mySQL;uid=sa;pwd=1234";
@@ -40,6 +58,12 @@ namespace WindowsFormsApplication1
             conn.Close();
         }
         static int  sampleT = 3;
+
+        /// <summary>
+        /// 将控制器配置数据写入数据库
+        /// </summary>
+        /// <param name="connOption">所有配置信息</param>  
+        /// <returns></returns>
         public void writeConnToDataBase(ConnectionOption connOption)
         {
             string SQLCONNECT = IMDataBase.connStr;
@@ -66,6 +90,11 @@ namespace WindowsFormsApplication1
             
 
         }
+        /// <summary>
+        /// 从数据库读取所有控制器配置信息
+        /// </summary>
+        /// <param name="listConn">所有配置信息</param>  
+        /// <returns></returns>
         static public void readAllConnections(ref List<ConnectionOption> listConn)
         {
             
@@ -87,6 +116,11 @@ namespace WindowsFormsApplication1
             conn.Close();
 
         }
+        /// <summary>
+        /// MD5加密
+        /// </summary>
+        /// <param name="strPwd"></param>  
+        /// <returns></returns>
         public string GetMD5(string strPwd)
         {
             string pwd = "";
