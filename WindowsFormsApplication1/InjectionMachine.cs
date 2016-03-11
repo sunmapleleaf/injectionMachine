@@ -923,16 +923,16 @@ namespace WindowsFormsApplication1
             ((Injection)injection).injectionVelocity[8, 1] = jo["injection"]["sSP_IN09"][1].ToString();
             ((Injection)injection).injectionVelocity[9, 1] = jo["injection"]["sSP_IN10"][1].ToString();
 
-            ((Injection)injection).injectionVelocity[0, 1] = jo["injection"]["sPO_IN01"][1].ToString();
-            ((Injection)injection).injectionVelocity[1, 1] = jo["injection"]["sPO_IN02"][1].ToString();
-            ((Injection)injection).injectionVelocity[2, 1] = jo["injection"]["sPO_IN03"][1].ToString();
-            ((Injection)injection).injectionVelocity[3, 1] = jo["injection"]["sPO_IN04"][1].ToString();
-            ((Injection)injection).injectionVelocity[4, 1] = jo["injection"]["sPO_IN05"][1].ToString();
-            ((Injection)injection).injectionVelocity[5, 1] = jo["injection"]["sPO_IN06"][1].ToString();
-            ((Injection)injection).injectionVelocity[6, 1] = jo["injection"]["sPO_IN07"][1].ToString();
-            ((Injection)injection).injectionVelocity[7, 1] = jo["injection"]["sPO_IN08"][1].ToString();
-            ((Injection)injection).injectionVelocity[8, 1] = jo["injection"]["sPO_IN09"][1].ToString();
-            ((Injection)injection).injectionVelocity[9, 1] = jo["injection"]["sPO_IN10"][1].ToString();
+            ((Injection)injection).injectionPosition[0, 1] = jo["injection"]["sPO_IN01"][1].ToString();
+            ((Injection)injection).injectionPosition[1, 1] = jo["injection"]["sPO_IN02"][1].ToString();
+            ((Injection)injection).injectionPosition[2, 1] = jo["injection"]["sPO_IN03"][1].ToString();
+            ((Injection)injection).injectionPosition[3, 1] = jo["injection"]["sPO_IN04"][1].ToString();
+            ((Injection)injection).injectionPosition[4, 1] = jo["injection"]["sPO_IN05"][1].ToString();
+            ((Injection)injection).injectionPosition[5, 1] = jo["injection"]["sPO_IN06"][1].ToString();
+            ((Injection)injection).injectionPosition[6, 1] = jo["injection"]["sPO_IN07"][1].ToString();
+            ((Injection)injection).injectionPosition[7, 1] = jo["injection"]["sPO_IN08"][1].ToString();
+            ((Injection)injection).injectionPosition[8, 1] = jo["injection"]["sPO_IN09"][1].ToString();
+            ((Injection)injection).injectionPosition[9, 1] = jo["injection"]["sPO_IN10"][1].ToString();
             #endregion
 
             #region //carriage
@@ -967,6 +967,116 @@ namespace WindowsFormsApplication1
             #endregion
 
             strMachineData = JsonConvert.SerializeObject((object)this);
+        }
+
+        public virtual void convertedFromHX(JObject jo, ref string strMachineData)
+        {
+            try
+            {
+                if (jo == null)
+                    return;
+
+                #region //clamp
+                ((Clamp)clamp).moldClosePressure[0, 1] = jo["MoldsetMldCls"]["tmClpClsPress1"].ToString();
+                ((Clamp)clamp).moldClosePressure[1, 1] = jo["MoldsetMldCls"]["tmClpClsPress2"].ToString();
+                ((Clamp)clamp).moldClosePressure[2, 1] = jo["MoldsetMldCls"]["tmClpClsPress3"].ToString();
+                ((Clamp)clamp).moldClosePressure[3, 1] = jo["MoldsetMldCls"]["tmClpClsPress4"].ToString();
+                ((Clamp)clamp).moldClosePressure[4, 1] = jo["MoldsetMldCls"]["tmClpClsPress5"].ToString();
+
+                ((Clamp)clamp).moldCloseVelocity[0, 1] = jo["MoldsetMldCls"]["tmClpClsSpeed1"].ToString();
+                ((Clamp)clamp).moldCloseVelocity[1, 1] = jo["MoldsetMldCls"]["tmClpClsSpeed2"].ToString();
+                ((Clamp)clamp).moldCloseVelocity[2, 1] = jo["MoldsetMldCls"]["tmClpClsSpeed3"].ToString();
+                ((Clamp)clamp).moldCloseVelocity[3, 1] = jo["MoldsetMldCls"]["tmClpClsSpeed4"].ToString();
+                ((Clamp)clamp).moldCloseVelocity[4, 1] = jo["MoldsetMldCls"]["tmClpClsSpeed5"].ToString();
+
+                ((Clamp)clamp).moldClosePosition[0, 1] = jo["MoldsetMldCls"]["tmClpClsPosi1"].ToString();
+                ((Clamp)clamp).moldClosePosition[1, 1] = jo["MoldsetMldCls"]["tmClpClsPosi2"].ToString();
+                ((Clamp)clamp).moldClosePosition[2, 1] = jo["MoldsetMldCls"]["tmClpClsPosi3"].ToString();
+                ((Clamp)clamp).moldClosePosition[3, 1] = jo["MoldsetMldCls"]["tmClpClsPosi4"].ToString();
+
+                ((Clamp)clamp).moldOpenPressure[0, 1] = jo["MoldsetMldOpn"]["tmClpOpnPress1"].ToString();
+                ((Clamp)clamp).moldOpenPressure[1, 1] = jo["MoldsetMldOpn"]["tmClpOpnPress2"].ToString();
+                ((Clamp)clamp).moldOpenPressure[2, 1] = jo["MoldsetMldOpn"]["tmClpOpnPress3"].ToString();
+                ((Clamp)clamp).moldOpenPressure[3, 1] = jo["MoldsetMldOpn"]["tmClpOpnPress4"].ToString();
+                ((Clamp)clamp).moldOpenPressure[4, 1] = jo["MoldsetMldOpn"]["tmClpOpnPress5"].ToString();
+
+                ((Clamp)clamp).moldOpenVelocity[0, 1] = jo["MoldsetMldOpn"]["tmClpOpnSpeed1"].ToString();
+                ((Clamp)clamp).moldOpenVelocity[1, 1] = jo["MoldsetMldOpn"]["tmClpOpnSpeed2"].ToString();
+                ((Clamp)clamp).moldOpenVelocity[2, 1] = jo["MoldsetMldOpn"]["tmClpOpnSpeed3"].ToString();
+                ((Clamp)clamp).moldOpenVelocity[3, 1] = jo["MoldsetMldOpn"]["tmClpOpnSpeed4"].ToString();
+                ((Clamp)clamp).moldOpenVelocity[4, 1] = jo["MoldsetMldOpn"]["tmClpOpnSpeed5"].ToString();
+
+                ((Clamp)clamp).moldOpenPosition[0, 1] = jo["MoldsetMldOpn"]["tmClpOpnPosi1"].ToString();
+                ((Clamp)clamp).moldOpenPosition[1, 1] = jo["MoldsetMldOpn"]["tmClpOpnPosi2"].ToString();
+                ((Clamp)clamp).moldOpenPosition[2, 1] = jo["MoldsetMldOpn"]["tmClpOpnPosi3"].ToString();
+                ((Clamp)clamp).moldOpenPosition[3, 1] = jo["MoldsetMldOpn"]["tmClpOpnPosi4"].ToString();
+                #endregion
+                #region //ejector
+                ((Ejector)ejector).ejectorFwdPressure[0, 1] = jo["MoldsetEject"]["tmEjectAdvPress1"].ToString();
+                ((Ejector)ejector).ejectorFwdPressure[1, 1] = jo["MoldsetEject"]["tmEjectAdvPress2"].ToString();
+
+                ((Ejector)ejector).ejectorFwdVelocity[0, 1] = jo["MoldsetEject"]["tmEjectAdvSpeed1"].ToString();
+                ((Ejector)ejector).ejectorFwdVelocity[1, 1] = jo["MoldsetEject"]["tmEjectAdvSpeed2"].ToString();
+
+                ((Ejector)ejector).ejectorFwdPosition[0, 1] = jo["MoldsetEject"]["tmEjectAdvPosi1"].ToString();
+                ((Ejector)ejector).ejectorFwdPosition[1, 1] = jo["MoldsetEject"]["tmEjectAdvPosi2"].ToString();
+
+                ((Ejector)ejector).ejectorBwdPressure[0, 1] = jo["MoldsetEject"]["tmEjectRetPress1"].ToString();
+                ((Ejector)ejector).ejectorBwdPressure[1, 1] = jo["MoldsetEject"]["tmEjectRetPress2"].ToString();
+
+                ((Ejector)ejector).ejectorBwdVelocity[0, 1] = jo["MoldsetEject"]["tmEjectRetSpeed1"].ToString();
+                ((Ejector)ejector).ejectorBwdVelocity[1, 1] = jo["MoldsetEject"]["tmEjectRetSpeed2"].ToString();
+
+                ((Ejector)ejector).ejectorBwdPosition[0, 1] = jo["MoldsetEject"]["tmEjectRetPosi1"].ToString();
+                ((Ejector)ejector).ejectorFwdPosition[1, 1] = jo["MoldsetEject"]["tmEjectRetPosi2"].ToString();
+
+                #endregion
+                #region //injection
+                ((Injection)injection).injectionPressure[0, 1] = jo["MoldsetInject"]["tmInjPress1"].ToString();
+                ((Injection)injection).injectionPressure[1, 1] = jo["MoldsetInject"]["tmInjPress2"].ToString();
+                ((Injection)injection).injectionPressure[2, 1] = jo["MoldsetInject"]["tmInjPress3"].ToString();
+                ((Injection)injection).injectionPressure[3, 1] = jo["MoldsetInject"]["tmInjPress4"].ToString();
+                ((Injection)injection).injectionPressure[4, 1] = jo["MoldsetInject"]["tmInjPress5"].ToString();
+                ((Injection)injection).injectionPressure[5, 1] = jo["MoldsetInject"]["tmInjPress6"].ToString();
+
+
+                ((Injection)injection).injectionVelocity[0, 1] = jo["MoldsetInject"]["tmInjSpeed1"].ToString();
+                ((Injection)injection).injectionVelocity[1, 1] = jo["MoldsetInject"]["tmInjSpeed2"].ToString();
+                ((Injection)injection).injectionVelocity[2, 1] = jo["MoldsetInject"]["tmInjSpeed3"].ToString();
+                ((Injection)injection).injectionVelocity[3, 1] = jo["MoldsetInject"]["tmInjSpeed4"].ToString();
+                ((Injection)injection).injectionVelocity[4, 1] = jo["MoldsetInject"]["tmInjSpeed5"].ToString();
+                ((Injection)injection).injectionVelocity[5, 1] = jo["MoldsetInject"]["tmInjSpeed6"].ToString();
+
+
+                ((Injection)injection).injectionPosition[0, 1] = jo["MoldsetInject"]["tmInjPosi1"].ToString();
+                ((Injection)injection).injectionPosition[1, 1] = jo["MoldsetInject"]["tmInjPosi2"].ToString();
+                ((Injection)injection).injectionPosition[2, 1] = jo["MoldsetInject"]["tmInjPosi3"].ToString();
+                ((Injection)injection).injectionPosition[3, 1] = jo["MoldsetInject"]["tmInjPosi4"].ToString();
+                ((Injection)injection).injectionPosition[4, 1] = jo["MoldsetInject"]["tmInjPosi5"].ToString();
+                ((Injection)injection).injectionPosition[5, 1] = jo["MoldsetInject"]["tmInjPosi6"].ToString();
+  
+                #endregion
+
+                #region //carriage
+                #endregion
+
+                #region //overView
+                ((OverView)overView).alarm[1] = jo["Alarm"]["tmAlarmState"].ToString();
+                ((OverView)overView).productCounterAct[1] = jo["Basic"]["tmFinishCount"].ToString();
+                ((OverView)overView).productCounterSet[1] = jo["Basic"]["tmPlanCount"].ToString();
+               // ((OverView)overView).productTimeAct[1] = jo["Basic"]["PRODHR"][1].ToString();
+                //((OverView)overView).productTimeSet[1] = jo["overView"]["TOTPR"][1].ToString();
+                ((OverView)overView).lastCycleTime[1] = jo["Monitor"]["tmCycleTime"].ToString();
+                ((OverView)overView).moldDataName[1] = jo["Basic"]["tmCraftID"].ToString();
+
+                #endregion
+
+            }
+            catch
+            {
+                MessageBox.Show("宏讯数据转换失败");
+            }
+            
         }
         public static void getQualityDataFromKeba(JObject jo, ref string qualityData) {
 
@@ -1016,6 +1126,9 @@ namespace WindowsFormsApplication1
             qd.injection1InjPeakPressure[1] = jo["qualityData"]["vCQ_MXFI"][1].ToString();//最大射压
             qualityData = JsonConvert.SerializeObject(qd);
         }
+
+
+
     }
     #region father
     class Clamp {

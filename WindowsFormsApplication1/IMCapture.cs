@@ -198,8 +198,10 @@ namespace WindowsFormsApplication1
 
         private void theout(object sender,System.Timers.ElapsedEventArgs e)
         {
+            string machineData1 = "";
+            (new InjectionMachine()).convertedFromHX((JObject)(HXOpc.itemsJO["hongxun001"]), ref machineData1);
 
-            SetValue(HXOpc.itemsValue[27][1]);
+          //  SetValue(HXOpc.itemsValue[27][1]);
             if(Interlocked.Exchange(ref timeThreadRunFlag,1)==0)
             {
                 DateTime cycleStartTime = System.DateTime.Now;
@@ -318,6 +320,12 @@ namespace WindowsFormsApplication1
                            // ts = connEndTime.Subtract(connStartTime);
                             //Console.WriteLine(ts);
                         }
+                        else if (item.controllerType.IndexOf("hongxun") != -1 && item.connStatus == "1")
+                        {
+                            string machineData = "";
+                            (new InjectionMachine()).convertedFromHX((JObject)(HXOpc.itemsJO[item.machineID]), ref machineData);
+                        }
+
 
                     }
                 }

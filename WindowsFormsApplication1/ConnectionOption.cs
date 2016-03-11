@@ -61,41 +61,7 @@ namespace WindowsFormsApplication1
                 }
             }
 
-            //Ping pingController = new Ping();
-            //PingReply reply = pingController.Send(IP, 10);
-            //if (reply.Status == IPStatus.Success)
-            //{
-            //    status = true;
-            //}
-            //else
-            //    status = false;
-
-
-            //telnet = new Telnet(IP, 23, 50);
-
-            //if (telnet.Connect() == false)
-            //{
-            //    status = false;
-            //    MessageBox.Show("连接失败");
-            //    return status;
-            //}
-
-            //if (status.ToString() != connStatus)
-            //{               
-            //    connTimeList += DateTime.Now.ToString();
-            //}
-
-            ////等待指定字符返回后才执行下一命令
-            //telnet.WaitFor("login:");
-            //telnet.Send(loginName);
-            //telnet.WaitFor("password:");
-            //telnet.Send(loginPassword);
-            //telnet.WaitFor(">");
-            //if (status)
-            //    connStatus = "1";
-            //else
-            //    connStatus = "0";
-            //return status;
+           
         }
         public void disconnectToController()
         {

@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using OPC.Common;
 using OPC.Data.Interface;
 using OPC.Data;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace WindowsFormsApplication1
 {
@@ -29,6 +31,8 @@ namespace WindowsFormsApplication1
         public bool opc_connected = false;		// flag if connected
         public string rootname = "Root";			// string of TreeView root (dummy)
         public List<string[]> itemsValue = new List<string[]>();   //all items value
+        public JObject itemsJO = new JObject();   //all items JOBJECT
+        public List<string> nameMap = new List<string>();   //all items value
 
         protected void theSrv_ServerShutDown(object sender, ShutdownRequestEventArgs e)
         {					
@@ -114,16 +118,15 @@ namespace WindowsFormsApplication1
         // event handler: called if any item in group has changed values
         protected void theGrp_DataChange(object sender, DataChangeEventArgs e)
         {
-            int i = 0;
-
             foreach (OPCItemState s in e.sts)
             {
                 if (HRESULTS.Succeeded(s.Error))
                 {
                     Trace.WriteLine("  val=" + s.DataValue.ToString());
                     //将改变的值给对应Item
-                    itemsValue[s.HandleClient][1] = s.DataValue.ToString();                  
-                    i++;                  
+                   // itemsValue[s.HandleClient][1] = s.DataValue.ToString();   
+                    string [] name = nameMap[s.HandleClient].Split('.');
+                    itemsJO[name[0]][name[1]][name[2]] = s.DataValue.ToString(); 
                 }
             }
         }
@@ -148,9 +151,8 @@ namespace WindowsFormsApplication1
                 if (opcorgi == OPCNAMESPACETYPE.OPC_NS_HIERARCHIAL)
                 {
                     theSrv.ChangeBrowsePosition(OPCBROWSEDIRECTION.OPC_BROWSE_TO, "");	// to root
-                    RecurBrowse(tnRoot, 1);
+                    RecurBrowse(tnRoot, 1,"",ref itemsJO);
                 }
-
                 tnRoot.ExpandAll();			// expand all nodes ([+] -> [-])
                 tnRoot.EnsureVisible();		// make the root visible
             }
@@ -162,7 +164,7 @@ namespace WindowsFormsApplication1
         }
 
         // recursively call the OPC namespace tree
-        public bool RecurBrowse(TreeNode tnParent, int depth, string name = "")
+        public bool RecurBrowse(TreeNode tnParent, int depth, string name,ref JObject childrenJO)
         {
             try
             {
@@ -173,17 +175,23 @@ namespace WindowsFormsApplication1
                     return true;
                 if (lst.Count < 1)
                     return true;
+                JObject joTmp = new JObject();
+
                 foreach (string s in lst)
                 {
                     TreeNode tnNext = new TreeNode(s, 0, 1);
                     theSrv.ChangeBrowsePosition(OPCBROWSEDIRECTION.OPC_BROWSE_DOWN, s);
 
                     string tmpName = (name == "" ? tnNext.Text : name + "." + tnNext.Text);
-                    RecurBrowse(tnNext, depth + 1, tmpName);
+                    JObject chJO=new JObject();
+
+                    RecurBrowse(tnNext, depth + 1, tmpName,ref chJO);
                     if (tnParent.Text == "Root")
                         theSrv.ChangeBrowsePosition(OPCBROWSEDIRECTION.OPC_BROWSE_TO, "");
                     else
                         theSrv.ChangeBrowsePosition(OPCBROWSEDIRECTION.OPC_BROWSE_TO, tnParent.Text);
+
+                    childrenJO.Add(tnNext.Text, chJO);
                     //叶子节点的时候存储全路径节点名
                     if (tnNext.FirstNode == null)
                     {
@@ -191,6 +199,7 @@ namespace WindowsFormsApplication1
                         strTemp[0] = tmpName;
                         strTemp[1] = "1";
                         itemsValue.Add(strTemp);
+                        nameMap.Add(tmpName);
                     }
                     tnParent.Nodes.Add(tnNext);
                 }
@@ -277,13 +286,20 @@ namespace WindowsFormsApplication1
                 DoInit();
                 int itemsValueCount = itemsValue.Count;
                 OPCItemDef[] aD = new OPCItemDef[itemsValueCount];
-                //将节点添加到group中
-                for (int i = 0; i < itemsValueCount; i++)
-                {
-                    itmHandleClient = i;
 
-                    aD[i] = new OPCItemDef(itemsValue[i][0], true, itmHandleClient, VarEnum.VT_EMPTY);
+                int i = 0;
+                foreach (string key in nameMap) {
+                        aD[i] = new OPCItemDef(key, true, i, VarEnum.VT_EMPTY);
+                        i++;
                 }
+                
+                //将节点添加到group中
+                //for (int i = 0; i < itemsValueCount; i++)
+                //{
+                //    itmHandleClient = i;
+
+                //    aD[i] = new OPCItemDef(itemsValue[i][0], true, itmHandleClient, VarEnum.VT_EMPTY);
+                //}
                 SERVERSTATUS status;
                 theSrv.GetStatus(out status);
                 OPCItemResult[] arrRes;

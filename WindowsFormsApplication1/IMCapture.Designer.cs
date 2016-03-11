@@ -39,7 +39,7 @@
             // 
             // sample
             // 
-            this.sample.Location = new System.Drawing.Point(35, 86);
+            this.sample.Location = new System.Drawing.Point(36, 25);
             this.sample.Name = "sample";
             this.sample.Size = new System.Drawing.Size(75, 23);
             this.sample.TabIndex = 3;
@@ -49,7 +49,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(92, 128);
+            this.textBox1.Location = new System.Drawing.Point(93, 67);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 21);
             this.textBox1.TabIndex = 4;
@@ -57,7 +57,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(117, 86);
+            this.button2.Location = new System.Drawing.Point(118, 25);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 5;
@@ -68,7 +68,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(33, 131);
+            this.label5.Location = new System.Drawing.Point(34, 70);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
             this.label5.TabIndex = 6;
@@ -76,7 +76,7 @@
             // 
             // option
             // 
-            this.option.Location = new System.Drawing.Point(35, 203);
+            this.option.Location = new System.Drawing.Point(36, 122);
             this.option.Name = "option";
             this.option.Size = new System.Drawing.Size(75, 23);
             this.option.TabIndex = 7;
@@ -86,7 +86,7 @@
             // 
             // viewHXData
             // 
-            this.viewHXData.Location = new System.Drawing.Point(117, 203);
+            this.viewHXData.Location = new System.Drawing.Point(118, 122);
             this.viewHXData.Name = "viewHXData";
             this.viewHXData.Size = new System.Drawing.Size(75, 23);
             this.viewHXData.TabIndex = 8;
@@ -96,7 +96,7 @@
             // 
             // tbText
             // 
-            this.tbText.Location = new System.Drawing.Point(301, 122);
+            this.tbText.Location = new System.Drawing.Point(224, 67);
             this.tbText.Name = "tbText";
             this.tbText.Size = new System.Drawing.Size(100, 21);
             this.tbText.TabIndex = 9;
@@ -105,7 +105,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(506, 260);
+            this.ClientSize = new System.Drawing.Size(366, 176);
             this.Controls.Add(this.tbText);
             this.Controls.Add(this.viewHXData);
             this.Controls.Add(this.option);
