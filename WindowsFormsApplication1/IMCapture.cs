@@ -143,8 +143,8 @@ namespace WindowsFormsApplication1
 
             /*  开启数据抓取线程 */
             int sampleInterval = Int32.Parse(textBox1.Text);
-           // if (sampleInterval < 3000)
-                //sampleInterval = 3000;
+            if (sampleInterval < 5000)
+                sampleInterval = 5000;
             getDataTimer = new System.Timers.Timer(sampleInterval);
             getDataTimer.Elapsed += new System.Timers.ElapsedEventHandler(theout);            
             getDataTimer.AutoReset = true;
@@ -198,11 +198,10 @@ namespace WindowsFormsApplication1
 
         private void theout(object sender,System.Timers.ElapsedEventArgs e)
         {
-            string machineData1 = "";
-            (new InjectionMachine()).convertedFromHX((JObject)(HXOpc.itemsJO["hongxun001"]), ref machineData1);
 
-          //  SetValue(HXOpc.itemsValue[27][1]);
-            if(Interlocked.Exchange(ref timeThreadRunFlag,1)==0)
+            string machineData1 = "";
+            (new InjectionMachine()).convertedFromHX((JObject)(HXOpc.itemsJO["hongxun002"]), ref machineData1);
+            if (Interlocked.Exchange(ref timeThreadRunFlag, 1) == 0)
             {
                 DateTime cycleStartTime = System.DateTime.Now;
                 DateTime cycleEndTime;
@@ -210,7 +209,7 @@ namespace WindowsFormsApplication1
                 lock (locker)
                 {
                     ConnectionOption.checkConnections(listConn);
-                    foreach (ConnectionOption item in listConn)                    
+                    foreach (ConnectionOption item in listConn)
                     {
                         if (!lastQualityDataCountDic.ContainsKey(item.machineID))
                             lastQualityDataCountDic.Add(item.machineID, -1);
@@ -220,7 +219,7 @@ namespace WindowsFormsApplication1
                         if (item.controllerType.IndexOf("gefran") != -1 && item.connStatus == "1")
                         {
 
-                           // new DataCapture().getFilesFromGefran(item.loginName, item.loginPassword, @"ftp://" + item.IP + @"/gefran/recipes/", Application.StartupPath + @"\data\" + item.controllerType, item.machineID + ".zip");
+                            // new DataCapture().getFilesFromGefran(item.loginName, item.loginPassword, @"ftp://" + item.IP + @"/gefran/recipes/", Application.StartupPath + @"\data\" + item.controllerType, item.machineID + ".zip");
 
 
                             JObject jo = ObjectAnalysis.analyseGefranFile(Application.StartupPath + @"\data\" + item.controllerType, item.machineID + ".txt", 0, item.controllerType);
@@ -228,7 +227,7 @@ namespace WindowsFormsApplication1
                             //ts = connEndTime.Subtract(connStartTime);
                             //jo["sampleTime"] = ts.TotalMilliseconds.ToString().Remove(ts.TotalMilliseconds.ToString().IndexOf('.') + 2);
                             //Console.WriteLine("{0}耗时{1}ms.", item.machineID, ts.TotalMilliseconds);
-                            string data="";
+                            string data = "";
                             if (item.controllerType == "gefranVedo")
                             {
                                 string qualityData = "";
@@ -254,58 +253,59 @@ namespace WindowsFormsApplication1
                                     InjectionMachine.getQualityDataFromGefranPerforma(jo, ref qualityData);
                                     (new IMDataBase()).writeQualityDataToDB(IMDataBase.connStr, item.machineID, qualityDataCount, qualityData);
                                 }
-                           
+
                             }
                             (new IMDataBase()).writeDataBase(IMDataBase.connStr, item.machineID, data);
                         }
                         //如果是KEBA
-                        else if(item.controllerType.IndexOf("keba")!=-1&&item.connStatus == "1")
+                        else if (item.controllerType.IndexOf("keba") != -1 && item.connStatus == "1")
                         {
                             string kebaData = "";
-                            try {
-                                 StreamReader sr = new StreamReader(@"c:\data\" + item.controllerType + @"\" + item.machineID + ".txt");
-                                 if (sr!=null)
-                                 {
-                                     kebaData = sr.ReadToEnd();
-                                     sr.Close();
-                                  //   kebaData = kebaData.Replace("Mold1", "clamp");
-                                  //   kebaData = kebaData.Replace("Ejector1", "ejector");
-                                  //   kebaData = kebaData.Replace("Injection1", "injection");
-                                     //kebaData.Replace("Carrage", "carrage");
-                                   //  kebaData = kebaData.Replace("Core1", "core");
-                                     kebaData = kebaData.Replace("Unknown", "\"Unknown\"");                                 
-                                     kebaData = kebaData.Replace("---", "\"---\"");
-                                     Console.Write(item.machineID);
-                                     var joTmp = JsonConvert.DeserializeObject(kebaData);
-                                     if (joTmp != null)
-                                     {
-                                         JObject jo = (JObject)joTmp;
-                                    // DateTime connEndTime = System.DateTime.Now;
-                                    // ts = connEndTime.Subtract(connStartTime);
-                                     jo.Add("sampleTime", "");
-                                     jo.Add("timestamp", System.DateTime.Now.ToString());
-                                     jo.Add("machineID", item.machineID);
-                                    // jo["sampleTime"] = ts.TotalMilliseconds.ToString().Remove(ts.TotalMilliseconds.ToString().IndexOf('.') + 2);
-                                     //jo["timestamp"] = System.DateTime.Now.ToString();
-                                     InjectionMachine macWithKeba = new InjectionMachine();
-                                    string machineData = "";
-                                    macWithKeba.convertedFromKeba(jo,ref machineData);
-                                     //kebaData = JsonConvert.SerializeObject(new InjectionMachineWithGefran());
-                                    string qualityData="";
-                                    string qualityDataCount = jo["system.sv_iShotCounterAct"][1].ToString();
-                                    if (lastQualityDataCountDic[item.machineID] ==-1)
-                                        lastQualityDataCountDic[item.machineID] = Int32.Parse(qualityDataCount);
-                                    else if (Int32.Parse(qualityDataCount) != lastQualityDataCountDic[item.machineID])
+                            try
+                            {
+                                StreamReader sr = new StreamReader(@"c:\data\" + item.controllerType + @"\" + item.machineID + ".txt");
+                                if (sr != null)
+                                {
+                                    kebaData = sr.ReadToEnd();
+                                    sr.Close();
+                                    //   kebaData = kebaData.Replace("Mold1", "clamp");
+                                    //   kebaData = kebaData.Replace("Ejector1", "ejector");
+                                    //   kebaData = kebaData.Replace("Injection1", "injection");
+                                    //kebaData.Replace("Carrage", "carrage");
+                                    //  kebaData = kebaData.Replace("Core1", "core");
+                                    kebaData = kebaData.Replace("Unknown", "\"Unknown\"");
+                                    kebaData = kebaData.Replace("---", "\"---\"");
+                                    Console.Write(item.machineID);
+                                    var joTmp = JsonConvert.DeserializeObject(kebaData);
+                                    if (joTmp != null)
                                     {
-                                        lastQualityDataCountDic[item.machineID] = Int32.Parse(qualityDataCount);
-                                        InjectionMachine.getQualityDataFromKeba(jo, ref qualityData);
-                                        (new IMDataBase()).writeQualityDataToDB(IMDataBase.connStr,item.machineID, qualityDataCount, qualityData);
+                                        JObject jo = (JObject)joTmp;
+                                        // DateTime connEndTime = System.DateTime.Now;
+                                        // ts = connEndTime.Subtract(connStartTime);
+                                        jo.Add("sampleTime", "");
+                                        jo.Add("timestamp", System.DateTime.Now.ToString());
+                                        jo.Add("machineID", item.machineID);
+                                        // jo["sampleTime"] = ts.TotalMilliseconds.ToString().Remove(ts.TotalMilliseconds.ToString().IndexOf('.') + 2);
+                                        //jo["timestamp"] = System.DateTime.Now.ToString();
+                                        InjectionMachine macWithKeba = new InjectionMachine();
+                                        string machineData = "";
+                                        macWithKeba.convertedFromKeba(jo, ref machineData);
+                                        //kebaData = JsonConvert.SerializeObject(new InjectionMachineWithGefran());
+                                        string qualityData = "";
+                                        string qualityDataCount = jo["system.sv_iShotCounterAct"][1].ToString();
+                                        if (lastQualityDataCountDic[item.machineID] == -1)
+                                            lastQualityDataCountDic[item.machineID] = Int32.Parse(qualityDataCount);
+                                        else if (Int32.Parse(qualityDataCount) != lastQualityDataCountDic[item.machineID])
+                                        {
+                                            lastQualityDataCountDic[item.machineID] = Int32.Parse(qualityDataCount);
+                                            InjectionMachine.getQualityDataFromKeba(jo, ref qualityData);
+                                            (new IMDataBase()).writeQualityDataToDB(IMDataBase.connStr, item.machineID, qualityDataCount, qualityData);
+                                        }
+
+                                        (new IMDataBase()).writeDataBase(IMDataBase.connStr, item.machineID, machineData);
                                     }
 
-                                    (new IMDataBase()).writeDataBase(IMDataBase.connStr, item.machineID, machineData);
-                                     }
-                                    
-                                 }
+                                }
                             }
                             catch (ArgumentException k)
                             {
@@ -316,14 +316,27 @@ namespace WindowsFormsApplication1
                             {
                                 Console.WriteLine("others");
                             }
-                           // DateTime connEndTime = System.DateTime.Now;
-                           // ts = connEndTime.Subtract(connStartTime);
+                            // DateTime connEndTime = System.DateTime.Now;
+                            // ts = connEndTime.Subtract(connStartTime);
                             //Console.WriteLine(ts);
                         }
+                        //如果是宏讯
                         else if (item.controllerType.IndexOf("hongxun") != -1 && item.connStatus == "1")
                         {
                             string machineData = "";
                             (new InjectionMachine()).convertedFromHX((JObject)(HXOpc.itemsJO[item.machineID]), ref machineData);
+                            string qualityData = "";
+                            string qualityDataCount = HXOpc.itemsJO[item.machineID]["Basic"]["tmShotCount"].ToString();
+                            if (lastQualityDataCountDic[item.machineID] == -1)
+                                lastQualityDataCountDic[item.machineID] = Int32.Parse(qualityDataCount);
+                            else if (Int32.Parse(qualityDataCount) != lastQualityDataCountDic[item.machineID])
+                            {
+                                lastQualityDataCountDic[item.machineID] = Int32.Parse(qualityDataCount);
+                                InjectionMachine.getQualityDataFromHX((JObject)(HXOpc.itemsJO[item.machineID]), ref qualityData);
+                                (new IMDataBase()).writeQualityDataToDB(IMDataBase.connStr, item.machineID, qualityDataCount, qualityData);
+                            }
+
+                            (new IMDataBase()).writeDataBase(IMDataBase.connStr, item.machineID, machineData);
                         }
 
 
@@ -335,7 +348,7 @@ namespace WindowsFormsApplication1
                 ts = cycleEndTime.Subtract(cycleStartTime);
                 Console.WriteLine("循环耗时{0}ms.", ts.TotalMilliseconds);
 
-                Interlocked.Exchange(ref timeThreadRunFlag,0);
+                Interlocked.Exchange(ref timeThreadRunFlag, 0);
 
             }
 

@@ -17,8 +17,8 @@ namespace WindowsFormsApplication1
 
     class IMDataBase
     {
-        //  static public string connStr = @"server=112.124.23.181;database=mySQL;uid=sa;pwd=1234";
-       static public string connStr = @"server=JS-DIANQI\SQLEXPRESS;database=mySQL;uid=sa;pwd=1234";
+         static public string connStr = @"server=112.124.23.181;database=mySQL;uid=sa;pwd=1234";
+      //  static public string connStr = @"server=JS-DIANQI\SQLEXPRESS;database=mySQL;uid=sa;pwd=1234";
 
        /// <summary>
        /// 将数据写入数据库

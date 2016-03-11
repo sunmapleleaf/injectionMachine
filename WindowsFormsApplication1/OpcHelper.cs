@@ -122,11 +122,16 @@ namespace WindowsFormsApplication1
             {
                 if (HRESULTS.Succeeded(s.Error))
                 {
-                    Trace.WriteLine("  val=" + s.DataValue.ToString());
+                    string value = s.DataValue==null ?null: s.DataValue.ToString();
+                    Trace.WriteLine("  val=" + value);
                     //将改变的值给对应Item
                    // itemsValue[s.HandleClient][1] = s.DataValue.ToString();   
                     string [] name = nameMap[s.HandleClient].Split('.');
-                    itemsJO[name[0]][name[1]][name[2]] = s.DataValue.ToString(); 
+                    if (s.HandleClient >= 58)
+                        name[2] = name[2];
+                    itemsJO[name[0]][name[1]][name[2]] = value; 
+
+
                 }
             }
         }
@@ -284,11 +289,13 @@ namespace WindowsFormsApplication1
             try
             {
                 DoInit();
-                int itemsValueCount = itemsValue.Count;
+                int itemsValueCount = nameMap.Count;
                 OPCItemDef[] aD = new OPCItemDef[itemsValueCount];
 
                 int i = 0;
                 foreach (string key in nameMap) {
+                    if (key == "hongxun001.Monitor.tmInjTime")
+                        i = i;
                         aD[i] = new OPCItemDef(key, true, i, VarEnum.VT_EMPTY);
                         i++;
                 }

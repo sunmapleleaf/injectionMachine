@@ -899,7 +899,6 @@ namespace WindowsFormsApplication1
             ((Ejector)ejector).ejectorFwdPosition[1, 1] = jo["ejector"]["aPO_EJEC"][1].ToString();
 
             #endregion
-
             #region //injection
             ((Injection)injection).injectionPressure[0, 1] = jo["injection"]["sPR_IN01"][1].ToString();
             ((Injection)injection).injectionPressure[1, 1] = jo["injection"]["sPR_IN02"][1].ToString();
@@ -1031,6 +1030,52 @@ namespace WindowsFormsApplication1
                 ((Ejector)ejector).ejectorFwdPosition[1, 1] = jo["MoldsetEject"]["tmEjectRetPosi2"].ToString();
 
                 #endregion
+                #region //core
+
+
+
+
+
+
+
+
+
+                ((Core)core).coreInPressure[0, 1] = jo["MoldsetCore"]["tmCoreAInPress"].ToString();
+                ((Core)core).coreInPressure[1, 1] = jo["MoldsetCore"]["tmCoreBInPress"].ToString();
+                ((Core)core).coreInPressure[2, 1] = jo["MoldsetCore"]["tmCoreCInPress"].ToString();
+
+                ((Core)core).coreInVelocity[0, 1] = jo["MoldsetCore"]["tmCoreAInSpeed"].ToString();
+                ((Core)core).coreInVelocity[1, 1] = jo["MoldsetCore"]["tmCoreBInSpeed"].ToString();
+                ((Core)core).coreInVelocity[2, 1] = jo["MoldsetCore"]["tmCoreCInSpeed"].ToString();
+
+                ((Core)core).coreInMonitorPosition[0, 1] = jo["MoldsetCore"]["tmCoreAInPosi"].ToString();
+                ((Core)core).coreInMonitorPosition[1, 1] = jo["MoldsetCore"]["tmCoreBInPosi"].ToString();
+                ((Core)core).coreInMonitorPosition[2, 1] = jo["MoldsetCore"]["tmCoreCInPosi"].ToString();
+
+                ((Core)core).coreInSetMoveTime[0, 1] = jo["MoldsetCore"]["tmCoreAInTime"].ToString();
+                ((Core)core).coreInSetMoveTime[1, 1] = jo["MoldsetCore"]["tmCoreBInTime"].ToString();
+                ((Core)core).coreInSetMoveTime[2, 1] = jo["MoldsetCore"]["tmCoreCInTime"].ToString();
+
+                ((Core)core).coreOutPressure[0, 1] = jo["MoldsetCore"]["tmCoreAOutPress"].ToString();
+                ((Core)core).coreOutPressure[1, 1] = jo["MoldsetCore"]["tmCoreBOutPress"].ToString();
+                ((Core)core).coreOutPressure[2, 1] = jo["MoldsetCore"]["tmCoreCOutPress"].ToString();
+
+                ((Core)core).coreOutVelocity[0, 1] = jo["MoldsetCore"]["tmCoreAOutSpeed"].ToString();
+                ((Core)core).coreOutVelocity[1, 1] = jo["MoldsetCore"]["tmCoreBOutSpeed"].ToString();
+                ((Core)core).coreOutVelocity[2, 1] = jo["MoldsetCore"]["tmCoreCOutSpeed"].ToString();
+
+
+                ((Core)core).coreOutMonitorPosition[0, 1] = jo["MoldsetCore"]["tmCoreAOutPosi"].ToString();
+                ((Core)core).coreOutMonitorPosition[1, 1] = jo["MoldsetCore"]["tmCoreBOutPosi"].ToString();
+                ((Core)core).coreOutMonitorPosition[2, 1] = jo["MoldsetCore"]["tmCoreCOutPosi"].ToString();
+
+                ((Core)core).coreOutSetMoveTime[0, 1] = jo["MoldsetCore"]["tmCoreAOutTime"].ToString();
+                ((Core)core).coreOutSetMoveTime[1, 1] = jo["MoldsetCore"]["tmCoreBOutTime"].ToString();
+                ((Core)core).coreOutSetMoveTime[2, 1] = jo["MoldsetCore"]["tmCoreCOutTime"].ToString();
+
+
+                #endregion
+
                 #region //injection
                 ((Injection)injection).injectionPressure[0, 1] = jo["MoldsetInject"]["tmInjPress1"].ToString();
                 ((Injection)injection).injectionPressure[1, 1] = jo["MoldsetInject"]["tmInjPress2"].ToString();
@@ -1070,7 +1115,7 @@ namespace WindowsFormsApplication1
                 ((OverView)overView).moldDataName[1] = jo["Basic"]["tmCraftID"].ToString();
 
                 #endregion
-
+                strMachineData = JsonConvert.SerializeObject((object)this);
             }
             catch
             {
@@ -1124,6 +1169,22 @@ namespace WindowsFormsApplication1
             qd.plastActMoveTime[1] = jo["qualityData"]["vCQ_TCHA"][1].ToString();//熔胶时间
             qd.injection1PlastEndPosition[1] = jo["qualityData"]["vCQ_PCHA"][1].ToString();//熔胶终点
             qd.injection1InjPeakPressure[1] = jo["qualityData"]["vCQ_MXFI"][1].ToString();//最大射压
+            qualityData = JsonConvert.SerializeObject(qd);
+        }
+
+        public static void getQualityDataFromHX(JObject jo, ref string qualityData)
+        {
+            QualityData qd = new QualityData();
+            qd.systemShotCounterAct[1] = jo["Basic"]["tmShotCount"].ToString();
+            qd.injection1CutOffPosition[1] = jo["Monitor"]["tmTurnPosi"].ToString();   //保压切换位置
+           // qd.injection1Cushion[1] = jo["qualityData"]["vCQ_CUSC"][1].ToString();        //螺杆终点
+            qd.injection1ActMoveTime[1] = jo["Monitor"]["tmInjTime"][1].ToString();//注射时间
+            qd.injection1CutOffPressure[1] = jo["Monitor"]["tmTurnPress"][1].ToString();//切换压力
+            qd.systemCycleTimeMachine[1] = jo["Monitor"]["tmCycleTime"][1].ToString();//周期
+            //qd.systemShotTimeAct[1] = jo["qualityData"]["vCQ_TCHA"][1].ToString();
+            qd.plastActMoveTime[1] = jo["Monitor"]["tmChargeTime"][1].ToString();//熔胶时间
+            qd.injection1PlastEndPosition[1] = jo["Monitor"]["tmInjStartPosi"].ToString();//熔胶终点
+           // qd.injection1InjPeakPressure[1] = jo["qualityData"]["vCQ_MXFI"][1].ToString();//最大射压
             qualityData = JsonConvert.SerializeObject(qd);
         }
 
