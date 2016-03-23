@@ -97,23 +97,32 @@ namespace WindowsFormsApplication1
         /// <returns></returns>
         static public void readAllConnections(ref List<ConnectionOption> listConn)
         {
-            
-            listConn.Clear();
-            string SQLCONNECT = IMDataBase.connStr;
-            SqlConnection conn = new SqlConnection(SQLCONNECT);
-            conn.Open();
+            try
+            {
 
-            string SQLCOMMAND = "select connDetail from connectionOption";
-            DataSet ds = new DataSet();
-            SqlDataAdapter da = new SqlDataAdapter(SQLCOMMAND, conn);
-            da.Fill(ds);
+                listConn.Clear();
+                string SQLCONNECT = IMDataBase.connStr;
+                SqlConnection conn = new SqlConnection(SQLCONNECT);
+                conn.Open();
 
-            listConn.Clear();
-            foreach (DataRow tmp in ds.Tables[0].Rows)
-            {               
-                listConn.Add(JsonConvert.DeserializeObject<ConnectionOption>(tmp[0].ToString()));
+                string SQLCOMMAND = "select connDetail from connectionOption";
+                DataSet ds = new DataSet();
+                SqlDataAdapter da = new SqlDataAdapter(SQLCOMMAND, conn);
+                da.Fill(ds);
+
+                listConn.Clear();
+                foreach (DataRow tmp in ds.Tables[0].Rows)
+                {
+                    listConn.Add(JsonConvert.DeserializeObject<ConnectionOption>(tmp[0].ToString()));
+                }
+                conn.Close();
             }
-            conn.Close();
+            catch
+            {
+                System.Windows.Forms.MessageBox.Show("数据库读取链接失败！检查网络！");
+            
+            }
+
 
         }
         /// <summary>

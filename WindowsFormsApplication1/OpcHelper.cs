@@ -123,7 +123,7 @@ namespace WindowsFormsApplication1
                 if (HRESULTS.Succeeded(s.Error))
                 {
                     string value = s.DataValue==null ?null: s.DataValue.ToString();
-                    Trace.WriteLine("  val=" + value);
+                   // Trace.WriteLine("  val=" + value);
                     //将改变的值给对应Item
                    // itemsValue[s.HandleClient][1] = s.DataValue.ToString();   
                     string [] name = nameMap[s.HandleClient].Split('.');
@@ -294,8 +294,6 @@ namespace WindowsFormsApplication1
 
                 int i = 0;
                 foreach (string key in nameMap) {
-                    if (key == "hongxun001.Monitor.tmInjTime")
-                        i = i;
                         aD[i] = new OPCItemDef(key, true, i, VarEnum.VT_EMPTY);
                         i++;
                 }

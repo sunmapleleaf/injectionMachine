@@ -1249,30 +1249,30 @@ namespace WindowsFormsApplication1
     }
     class Core
     {
-        public string[,] coreUse = new string[4, 2];
-        public string[,] coreOutMode = new string[4, 2];
-        public string[,] coreInMode = new string[4, 2];
+        public string[,] coreUse = new string[4, 2];        //中子使用
+        public string[,] coreOutMode = new string[4, 2];    //出芯模式
+        public string[,] coreInMode = new string[4, 2];     //进芯模式
         public string[,] coreHold = new string[4, 2];            //11.27 coreInHold 修改为coreHold
-        public string[,] coreInControlMode = new string[4, 2];   //time or limit switch
-        public string[,] coreOutControlMode = new string[4, 2];
-        public string[,] coreInVelocity = new string[4, 2];
-        public string[,] coreOutVelocity = new string[4, 2];
-        public string[,] coreInPressure = new string[4, 2];
-        public string[,] coreOutPressure = new string[4, 2];
-        public string[,] coreInActPosition = new string[4, 2];
-        public string[,] coreOutActPosition = new string[4, 2];
-        public string[,] coreInMonitorPosition = new string[4, 2];
-        public string[,] coreOutMonitorPosition = new string[4, 2];
-        public string[,] coreInActMoveTime = new string[4, 2];
-        public string[,] coreOutActMoveTime = new string[4, 2];
-        public string[,] coreInSetMoveTime = new string[4, 2];
-        public string[,] coreOutSetMoveTime = new string[4, 2];
-        public string[,] coreInSetScrewCount = new string[4, 2];
-        public string[,] coreOutSetScrewCount = new string[4, 2];
-        public string[,] coreInActScrewCount = new string[4, 2];
-        public string[,] coreOutActScrewCount = new string[4, 2];
-        public string[,] coreInPriority = new string[4, 2];
-        public string[,] coreOutPriority = new string[4, 2];
+        public string[,] coreInControlMode = new string[4, 2];   //进控制模式
+        public string[,] coreOutControlMode = new string[4, 2];//出控制模式
+        public string[,] coreInVelocity = new string[4, 2];//进速度
+        public string[,] coreOutVelocity = new string[4, 2];    //出速度
+        public string[,] coreInPressure = new string[4, 2];     //进压力
+        public string[,] coreOutPressure = new string[4, 2];    //出压力
+        public string[,] coreInActPosition = new string[4, 2];   //进实际位置
+        public string[,] coreOutActPosition = new string[4, 2];  //出实际位置
+        public string[,] coreInMonitorPosition = new string[4, 2]; //进位置
+        public string[,] coreOutMonitorPosition = new string[4, 2];// 出位置
+        public string[,] coreInActMoveTime = new string[4, 2];// 进实际时间
+        public string[,] coreOutActMoveTime = new string[4, 2];//出时间时间
+        public string[,] coreInSetMoveTime = new string[4, 2];//进设置时间
+        public string[,] coreOutSetMoveTime = new string[4, 2];//出设置时间
+        public string[,] coreInSetScrewCount = new string[4, 2];//进绞牙数
+        public string[,] coreOutSetScrewCount = new string[4, 2];//出绞牙数
+        public string[,] coreInActScrewCount = new string[4, 2];//进实际绞牙数
+        public string[,] coreOutActScrewCount = new string[4, 2];//出实际绞牙数
+        public string[,] coreInPriority = new string[4, 2];//进优先权
+        public string[,] coreOutPriority = new string[4, 2];//出优先权
     }
 
     class Injection
