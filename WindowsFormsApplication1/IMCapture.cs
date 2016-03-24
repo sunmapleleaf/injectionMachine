@@ -63,6 +63,10 @@ namespace WindowsFormsApplication1
 
         }
 
+         ~IMCapture()
+        {
+
+        }
         /// <summary>
         ///开始采样,开启数据抓取线程和慢速线程.
         /// 
@@ -94,9 +98,9 @@ namespace WindowsFormsApplication1
             Console.WriteLine("slow");
 
             /*  启动OPC客户端读宏讯数据 */
-            HXOpc = new OpcHelper();
+         //   HXOpc = new OpcHelper();
             
-            HXOpc.getValueFormHX();
+           // HXOpc.getValueFormHX();
 
         }
 
@@ -157,19 +161,32 @@ namespace WindowsFormsApplication1
 
 
                             //找出mgdb中编号为item.machineID的状态数据
-                            IMongoQuery iq = Query.And(Query.Matches("machineID", item.machineID),Query.EQ("runingFlag",true));  
-                            MachineStatus machineStatusTop = MachineStatus.Search(iq).ToList()[0];
-                            string machineLastStatus = machineStatusTop.lastStatus;
-                            //记录时间
-                            if(machineLastStatus == "softwareOff")
+                            IMongoQuery iq = Query.Matches("machineID", item.machineID);
+                            //IEnumerable<MachineStatus> ieMs = MachineStatus.Search(iq);
+                            IMongoUpdate iu = MongoDB.Driver.Builders.Update.Set("machineID", item.machineID);
+                            MachineStatus machineStatusTop = MachineStatus.FindAndModify(iq ,iu, "startTime", true);
+                            if (machineStatusTop != null)
                             {
-                                IMongoUpdate iu = MongoDB.Driver.Builders.Update.Set("endTime",System.DateTime.Now.ToString()).Set("runingFlag",false);
-                                MachineStatus.Update(iq, iu, UpdateFlags.Multi); 
+                                string machineLastStatus = machineStatusTop.lastStatus;
+                                //记录时间
+                                if (machineLastStatus == "softwareOff")
+                                {
+                                    iu = MongoDB.Driver.Builders.Update.Set("endTime", System.DateTime.Now.ToString());
+                                    MachineStatus.FindAndModify(iq, iu, "startTime", true);
+                                }
+                                else
+                                {
+                                    iu = MongoDB.Driver.Builders.Update.Set("endTime", machineStatusTop.startTime);
+                                    MachineStatus.FindAndRemove(iq, "startTime", true);
+                                    MachineStatus ms = new MachineStatus(item.machineID, "softwareOff", machineStatusTop.startTime, System.DateTime.Now.ToString());
+                                    ms.Insert();
+
+                                }
                             }
-                            else{
-                                IMongoUpdate iu = MongoDB.Driver.Builders.Update.Set("endTime", machineStatusTop.startTime).Set("runingFlag", false);
-                                MachineStatus.Update(iq, iu, UpdateFlags.Multi); 
+                            else {
+                                MachineStatus.Remove(iq);
                             }
+                           
                             machineStatusRecord.Add(item.machineID, new MachineStatusRecord() { machineStatus = "softwareOn",lastMachineStatus="softwareOn"});
                         }
                         DateTime connStartTime = System.DateTime.Now;
@@ -284,57 +301,71 @@ namespace WindowsFormsApplication1
                         //如果是宏讯
                         else if (item.controllerType.IndexOf("hongxun") != -1 && item.connStatus == "1")
                         {
-                            machineData = "";
-                            (new InjectionMachine()).convertedFromHX((JObject)(HXOpc.itemsJO[item.machineID]), ref machineData);
-                            string qualityData = "";
-                            string qualityDataCount = HXOpc.itemsJO[item.machineID]["Basic"]["tmShotCount"].ToString();
-                            if (lastQualityDataCountDic[item.machineID] == -1)
-                                lastQualityDataCountDic[item.machineID] = Int32.Parse(qualityDataCount);
-                            else if (Int32.Parse(qualityDataCount) != lastQualityDataCountDic[item.machineID])
+                            //machineData = "";
+                            //(new InjectionMachine()).convertedFromHX((JObject)(HXOpc.itemsJO[item.machineID]), ref machineData);
+                            //string qualityData = "";
+                            //string qualityDataCount = HXOpc.itemsJO[item.machineID]["Basic"]["tmShotCount"].ToString();
+                            //if (lastQualityDataCountDic[item.machineID] == -1)
+                            //    lastQualityDataCountDic[item.machineID] = Int32.Parse(qualityDataCount);
+                            //else if (Int32.Parse(qualityDataCount) != lastQualityDataCountDic[item.machineID])
+                            //{
+                            //    lastQualityDataCountDic[item.machineID] = Int32.Parse(qualityDataCount);
+                            //    InjectionMachine.getQualityDataFromHX((JObject)(HXOpc.itemsJO[item.machineID]), ref qualityData);
+                            //    (new IMDataBase()).writeQualityDataToDB(IMDataBase.connStr, item.machineID, qualityDataCount, qualityData);
+                            //}
+
+                            //(new IMDataBase()).writeDataBase(IMDataBase.connStr, item.machineID, machineData);
+                            //SetValue(item.machineID + "数据写入成功");
+
+                        }
+                        try
+                        {
+                            //记录机器运行状态
+                            //如果是第一次
+                            if (machineStatusRecord[item.machineID].machineStatus == "softwareOn")
                             {
-                                lastQualityDataCountDic[item.machineID] = Int32.Parse(qualityDataCount);
-                                InjectionMachine.getQualityDataFromHX((JObject)(HXOpc.itemsJO[item.machineID]), ref qualityData);
-                                (new IMDataBase()).writeQualityDataToDB(IMDataBase.connStr, item.machineID, qualityDataCount, qualityData);
+                                machineStatusRecord[item.machineID].machineStatus = getMachineStatus(machineData, item);
+                                machineStatusRecord[item.machineID].lastMachineStatus = machineStatusRecord[item.machineID].machineStatus;
+                                MachineStatus ms = new MachineStatus(item.machineID, machineStatusRecord[item.machineID].machineStatus, System.DateTime.Now.ToString(), "");
+                                ms.Insert();
+
+                            }
+                            //不是第一次
+                            else
+                            {
+                                
+                                machineStatusRecord[item.machineID].machineStatus = getMachineStatus(machineData, item);
+                                if (machineStatusRecord[item.machineID].lastMachineStatus != machineStatusRecord[item.machineID].machineStatus)
+                                {
+                                    IMongoQuery iq = Query.Matches("machineID", item.machineID);
+                                    //IMongoUpdate iu = MongoDB.Driver.Builders.Update.Set("machineID", item.machineID);
+                                    //MachineStatus machineStatusTop = MachineStatus.FindAndModify(iq, iu, "startTime", true); 
+                                    //IEnumerable<MachineStatus> ieMs = MachineStatus.Search(iq);
+                                    //MachineStatus machineStatusTop = ieMs.Count() > 0 ? ieMs.ToList()[0] : null;
+                                    //if (machineStatusTop != null)
+                                    
+                                    {
+                                        IMongoUpdate iu = MongoDB.Driver.Builders.Update.Set("endTime", System.DateTime.Now.ToString());
+                                        MachineStatus.FindAndModify(iq,iu,"startTime",true);
+                                        MachineStatus ms = new MachineStatus(item.machineID, machineStatusRecord[item.machineID].machineStatus, System.DateTime.Now.ToString(), "");
+                                        ms.Insert();
+                                        machineStatusRecord[item.machineID].lastMachineStatus = machineStatusRecord[item.machineID].machineStatus;
+
+
+                                    }
+
+
+                                }
+
+
                             }
 
-                            (new IMDataBase()).writeDataBase(IMDataBase.connStr, item.machineID, machineData);
-                            SetValue(item.machineID + "数据写入成功");
-
                         }
-                        //记录机器运行状态
-                        //如果是第一次
-                        if(machineStatusRecord[item.machineID].machineStatus == "softwareOn"){
-                            machineStatusRecord[item.machineID].machineStatus = getMachineStatus(machineData, item);
-                            machineStatusRecord[item.machineID].lastMachineStatus = machineStatusRecord[item.machineID].machineStatus;
-                            MachineStatus ms = new MachineStatus(item.machineID, machineStatusRecord[item.machineID].machineStatus, System.DateTime.Now.ToString(), "",true);
-                            ms.Insert();
-
+                        catch { 
+                        
+                        
                         }
-                        //不是第一次
-                        else
-                        {
-                             machineStatusRecord[item.machineID].machineStatus = getMachineStatus(machineData, item);
-                             if (machineStatusRecord[item.machineID].lastMachineStatus != machineStatusRecord[item.machineID].machineStatus)
-                             {
-                                 IMongoQuery iq = Query.And(Query.Matches("machineID", item.machineID), Query.EQ("runingFlag", true));
-                                 
-                                 MachineStatus machineStatusTop = MachineStatus.Search(iq).Count()>0 ? MachineStatus.Search(iq).ToList()[0]:null;
-                                 if(machineStatusTop != null)
-                                 {
-                                     IMongoUpdate iu = MongoDB.Driver.Builders.Update.Set("endTime", System.DateTime.Now.ToString()).Set("runingFlag", false);
-                                     MachineStatus.Update(iq, iu, UpdateFlags.Multi); 
-                                     MachineStatus ms = new MachineStatus(item.machineID, machineStatusRecord[item.machineID].machineStatus, System.DateTime.Now.ToString(), "", true);
-                                     ms.Insert();
-                                     machineStatusRecord[item.machineID].lastMachineStatus = machineStatusRecord[item.machineID].machineStatus;
 
-
-                                 }
-
-
-                             }
-
-
-                        }
 
 
 
@@ -366,11 +397,10 @@ namespace WindowsFormsApplication1
             {
                 status = "machineOff";
             }
-            else if (Int32.Parse(jo["overView"]["alarm"].ToString()) > 0)
+            else if (jo!=null&&jo["overView"]!=null&&jo["overView"]["alarm"]!=null&&jo["overView"]["alarm"][1].ToString()!=""&&Int32.Parse(jo["overView"]["alarm"][1].ToString()) > 0)
                 status = "alarm";
             else
                 status = "working";
-
             return status;
         }
 
@@ -445,11 +475,12 @@ namespace WindowsFormsApplication1
 
         private void button1_Click(object sender, EventArgs e)
         {
+            
+            
             // 添加一条数据  
-            MachineStatus ms = new MachineStatus("keba001","softwareOff","2016-1-05","2017-12-03",true);
-            ms.Insert();
+            MachineStatus ms = new MachineStatus("keba001","softwareOff","2016-1-05",System.DateTime.Now.ToString());
 
-
+           
             // 删除一条数据  
             //IMongoQuery iq = new QueryDocument("name", "TestNameA");
             //Users.Remove(iq);  
@@ -458,7 +489,7 @@ namespace WindowsFormsApplication1
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("machineID", "keba001");
             IMongoQuery iq = new QueryDocument(dic);
-            IMongoUpdate iu = MongoDB.Driver.Builders.Update.Set("lastStatus", "machineOff1");
+            IMongoUpdate iu = MongoDB.Driver.Builders.Update.Set("machineID", "keba001");
          //   MachineStatus.Update(iq, iu, UpdateFlags.Multi);  
 
             //获取数据列表  
@@ -477,8 +508,8 @@ namespace WindowsFormsApplication1
              MongoCollection<BsonDocument> collection = mongoDatabase.GetCollection<BsonDocument>("machineStatus");
 
             
-                var query = Query.Matches("machineID", "/^keba/");
-                var sortBy = SortBy.Ascending("endTime");
+                var query = Query.And(Query.Matches("machineID", "/^keba/"),Query.GT("endTime",(System.DateTime.Now.AddMinutes(-2).ToString())));
+                var sortBy = SortBy.Descending("endTime");
                 var result = collection.FindAndModify(
                     query,
                     sortBy,
@@ -490,6 +521,29 @@ namespace WindowsFormsApplication1
 
 
 
+        }
+
+        private void IMCapture_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void IMCapture_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            getDataTimer.Enabled = false;
+            slowTimer.Enabled = false;
+
+            foreach (ConnectionOption item in listConn)
+            {
+                //IMongoQuery iq = Query.And(Query.Matches("machineID", item.machineID), Query.EQ("runningFlag", true));
+                //IEnumerable<MachineStatus> ieMs = MachineStatus.Search(iq);
+                //IMongoUpdate iu = MongoDB.Driver.Builders.Update.Set("endTime", System.DateTime.Now.ToString()).Set("runningFlag", false);
+                //MachineStatus.Update(iq, iu, UpdateFlags.Multi);
+                //MachineStatus ms = new MachineStatus(item.machineID, "softwareOff", System.DateTime.Now.ToString(), "");
+                //ms.Insert();
+
+
+            }
         }
 
 

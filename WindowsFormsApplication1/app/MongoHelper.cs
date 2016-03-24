@@ -18,15 +18,50 @@ namespace WindowsFormsApplication1.app
         public String startTime { get; set; }
         public String endTime { get; set; }
 
-        public Boolean runningFlag { get;set; }
+     //   public Boolean runningFlag { get;set; }
+        public static MachineStatus FindAndModify(IMongoQuery query, IMongoUpdate iu, string sortParam, Boolean option)
+        {
 
-        public MachineStatus(String machineID, String lastStatus, String startTime, String endTime,Boolean runningFlag)
+            //IMongoUpdate iu = MongoDB.Driver.Builders.Update.Set("machineID", machineID);
+            //IMongoQuery query =Query.EQ("machineID", machineID);
+            SortByBuilder sortBy;
+            if(option)
+                sortBy = SortBy.Descending(sortParam);
+            else
+                sortBy = SortBy.Ascending(sortParam);
+            FindAndModifyResult result = MongoHelper.FindAndModify(tableName, query, sortBy, iu, false, true);
+            if (result.ModifiedDocument == null)
+            {
+                return null;
+            }
+            else
+                return new MachineStatus(result.ModifiedDocument["machineID"].AsString, result.ModifiedDocument["lastStatus"].AsString, result.ModifiedDocument["startTime"].AsString, result.ModifiedDocument["endTime"].AsString);
+
+        }
+        public static MachineStatus FindAndRemove(IMongoQuery query,string sortParam,Boolean option)
+        {
+
+            //IMongoUpdate iu = MongoDB.Driver.Builders.Update.Set("machineID", machineID);
+            //IMongoQuery query =Query.EQ("machineID", machineID);
+            SortByBuilder sortBy;
+            if (option)
+                sortBy = SortBy.Descending(sortParam);
+            else
+                sortBy = SortBy.Ascending(sortParam);
+            FindAndModifyResult result = MongoHelper.FindAndRemove(tableName, query, sortBy);
+            if (result.ToBsonDocument().Count() == 0) return null;
+            else
+                return new MachineStatus(result.ModifiedDocument["machineID"].AsString, result.ModifiedDocument["lastStatus"].AsString, result.ModifiedDocument["startTime"].AsString, result.ModifiedDocument["endTime"].AsString);
+
+        }
+
+        public MachineStatus(String machineID, String lastStatus, String startTime, String endTime)
         {
             this.machineID = machineID;
             this.lastStatus = lastStatus;
             this.startTime = startTime;
             this.endTime = endTime;
-            this.runningFlag = runningFlag;
+          //  this.runningFlag = runningFlag;
         }
         public Boolean Insert()
         {
@@ -35,14 +70,14 @@ namespace WindowsFormsApplication1.app
                 { "lastStatus", lastStatus },  
                 {"startTime",startTime},
                 {"endTime",endTime},
-                {"runningFlag",runningFlag}
+                //{"runningFlag",runningFlag}
             };
             return MongoHelper.Insert(tableName, dom);
         }
         public static IEnumerable<MachineStatus> Search(IMongoQuery query)
         {
             foreach (BsonDocument tmp in MongoHelper.Search(tableName, query))
-                yield return new MachineStatus(tmp["machineID"].AsString, tmp["lastStatus"].AsString, tmp["startTime"].AsString, tmp["endTime"].AsString, tmp["runningFlag"].AsBoolean);
+                yield return new MachineStatus(tmp["machineID"].AsString, tmp["lastStatus"].AsString, tmp["startTime"].AsString, tmp["endTime"].AsString);
         }
         public static Boolean Remove(IMongoQuery query)
         {
@@ -96,6 +131,25 @@ namespace WindowsFormsApplication1.app
         public static string connectionString = "mongodb://112.124.23.181";
         //数据库名  
         private static string databaseName = "IMDB";
+
+
+        /// <summary>  
+        /// 排序并删除
+        /// </summary> 
+        public static FindAndModifyResult FindAndRemove(String collectionName, IMongoQuery query, IMongoSortBy sortBy)
+        {
+            //定义Mongo服务  
+            MongoServer server = MongoServer.Create(connectionString);
+            //获取databaseName对应的数据库，不存在则自动创建  
+            MongoDatabase mongoDatabase = server.GetDatabase(databaseName);
+            MongoCollection<BsonDocument> collection = mongoDatabase.GetCollection<BsonDocument>(collectionName);
+
+
+            return collection.FindAndRemove(
+                query,
+                sortBy
+            );
+        }
          /// <summary>  
         /// 查询排序
         /// </summary>  
@@ -112,8 +166,8 @@ namespace WindowsFormsApplication1.app
                     query,
                     sortBy,
                     update,
-                    true,
-                    true
+                    returnNew,
+                    upsert
                 );
         }
         public static MongoCursor<BsonDocument> Search(String collectionName, IMongoQuery query)

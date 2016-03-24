@@ -36,8 +36,8 @@
             this.viewHXData = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -126,16 +126,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "功能";
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.listBox1);
-            this.groupBox2.Location = new System.Drawing.Point(36, 205);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(331, 194);
-            this.groupBox2.TabIndex = 12;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "显示";
-            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(206, 14);
@@ -145,6 +135,16 @@
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.listBox1);
+            this.groupBox2.Location = new System.Drawing.Point(36, 205);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(331, 194);
+            this.groupBox2.TabIndex = 12;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "显示";
             // 
             // IMCapture
             // 
@@ -156,6 +156,8 @@
             this.Name = "IMCapture";
             this.Text = "数据采集";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.IMCapture_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.IMCapture_FormClosed);
+            this.Load += new System.EventHandler(this.IMCapture_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
